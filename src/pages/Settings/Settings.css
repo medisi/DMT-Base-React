@@ -1,0 +1,828 @@
+.sidebar.settings {
+    width: 265px;
+}
+.sidebar_settings-title {
+    margin: 20px 0 15px;
+    font-size: 20px;
+    font-weight: 600;
+    width: 100%;
+    text-align: center;
+}
+.sidebar_settings-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 100%;
+}
+.sidebar_settings-menu-item {
+    display: flex;
+    gap: 10px;
+    border-radius: 10px;
+    background-color: transparent;
+    cursor: pointer;
+    width: 100%;
+    align-items: center;
+}
+.sidebar_settings-menu-item:not(.mob) {
+    padding: 5px 10px;
+}
+.sidebar_settings-menu-item.mob {
+    padding: 15px 20px;
+}   
+.sidebar_settings-menu-item img {
+    width: 18px;
+    height: 18px;
+}
+.sidebar_settings-menu-item span {
+    font-size: 16px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.settings_container {
+    width: 100%;
+    padding: 35px 20px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+.settings_container-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.settings_container-header div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.settings_container-header span {
+    font-size: 16px;
+    font-weight: 600;
+}
+.save-settings {
+    margin-left: 30px;
+    font-size: 16px;
+    color: #fff;
+    border-radius: 15px;
+    width: 114px;
+    height: 29px;
+    border: none;
+    cursor: pointer;
+    display: none;
+}
+.settings_container-content {
+    flex-direction: column;
+    gap: 30px;
+    border-radius: 10px;
+    padding: 35px 30px;
+    display: none;
+    overflow-y: auto;
+}
+.settings_container-content.active {
+    display: flex;
+}
+.settings_container-content-item {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.settings_container-content-item-title {
+    width: 100%;
+    text-align: left;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+/* ОКНО С ШРИФТАМИ */
+.modal-fonts {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #0005;
+    z-index: 210000;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(5px);
+    padding: 20px;
+}
+.modal-fonts.active {
+    display: flex;
+}
+.modal-fonts-content {
+    background-color: #FFF0F0;
+    border-radius: 15px;
+    padding: 20px;
+    width: 100%;
+    max-width: 432px;
+    color: #000;
+    display: flex;
+    flex-direction: column;
+}
+.modal-fonts-title {
+    font-size: 18px;
+    width: 100%;
+    text-align: center;
+    font-weight: 600;
+}
+.modal-fonts-items {
+    margin: 20px 0 15px;
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+}
+.modal-fonts-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    width: 100%;
+}
+.modal-fonts-item.fw {
+    width: 80px;
+}
+.modal-fonts-item-title {
+    margin-bottom: 3px;
+    text-align: left;
+}
+.modal-fonts-item-example {
+    width: 100%;
+    background-color: #0001;
+    border-radius: 5px;
+    padding: 5px 10px;
+}
+.modal-fonts-item-example span {
+    font-size: 14px;
+}
+.modal-fonts-item-cards {
+    width: 100%;
+    background-color: #0001;
+    border-radius: 5px;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    height: 100px;
+    overflow: auto;
+}
+.modal-fonts-item-card {
+    font-size: 14px;
+    padding: 2px 5px;
+    cursor: pointer;
+    user-select: none;
+}
+.modal-fonts-item-card.active,
+.modal-fonts-item-card:hover {
+    background-color: #0001;
+    border-radius: 5px;
+}
+.modal-fonts-example {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+.modal-fonts-example-title {
+    width: 100%;
+    text-align: center;
+    font-size: 14px;
+}
+.modal-fonts-example-text {
+    width: 100%;
+    background-color: #0001;
+    border-radius: 5px;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.modal-fonts-example-text span {
+    font-size: 14px;
+    height: 25px;
+    user-select: none;
+}
+.modal-fonts-btns {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 20px;
+}
+.modal-fonts-btn {
+    font-size: 14px;
+    border-radius: 15px;
+    border: 1px solid #FF4F00;
+    padding: 10px;
+    min-width: 115px;
+    width: 100%;
+    height: 36px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+.modal-fonts-btn.accept {
+    background-color: #FF4F00;
+    color: #fff;
+}
+.modal-fonts-btn.cancel:hover {
+    background-color: #0001;
+    transition: all .3s ease;
+}
+/* PROFILE */
+.setting-profile-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.setting-profile-card {
+    display: grid;
+    grid-template-columns: 255px auto;
+    gap: 15px;
+}
+.setting-profile-card-title,
+.setting-profile-card-text {
+    font-size: 16px;
+}
+.setting-profile-card-title {
+    font-weight: 500;
+}
+.setting-profile-image {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+.setting-profile-image-image {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.setting-profile-image-image img {
+    width: 28px;
+    height: 35px;
+    opacity: .5;
+}
+.setting-profile-image button {
+    width: auto;
+    height: auto;
+    font-size: 14px;
+    padding: 5px 10px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+}
+#settigs-btn-quit {
+    margin-top: 30px;
+    border: 1px solid #ED7272;
+    border-radius: 15px;
+    padding: 5px 35px;
+    width: 120px;
+    height: 30px;
+    color: #ED7272;
+    font-size: 16px;
+    background-color: transparent;
+    cursor: pointer;
+    background-color: transparent;
+    transition: all .3s ease;
+}
+#settigs-btn-quit:hover {
+    background-color: #ED7272;
+    color: #fff;
+}
+/* PERSONALIZATION */
+.setting-item-cards {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+.setting-item-card,
+.setting-item-card-container {
+    width: 100%;
+    max-width: 440px;
+    padding: 5px 0;
+    display: flex;
+    justify-content: space-between;
+}
+.setting-item-card-container {
+    gap: 10px;
+}
+.setting-item-card-title {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    transition: all .3s ease;
+}
+.setting-item-card-title-image {
+    width: 20px;
+    height: 20px;
+}
+.setting-item-card-title-image img {
+    height: 20px;
+}
+.setting-item-card-title span {
+    font-size: 16px;
+    white-space: wrap;
+}
+.setting-item-card-text select {
+    background-color: #FFF0F0;
+    border-radius: 5px;
+    padding: 5px 10px;
+    border: none;
+    outline: none;
+    box-shadow: 0 4px 4px 0 #00000025;
+    font-size: 16px;
+    cursor: pointer;
+}
+.setting-item-card-text:not(.toggle-btn) button {
+    background-color: #FFF0F0;
+    border-radius: 5px;
+    padding: 5px 10px;
+    border: none;
+    outline: none;
+    box-shadow: 0 4px 4px 0 #00000025;
+    font-size: 16px;
+    cursor: pointer;
+}
+.setting-item-card.more {
+    flex-direction: column;
+    max-width: 100%;
+}
+.setting-more-text {
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+.toggle {
+    width: 45px;
+    height: 20px;
+    border-radius: 10px;
+    position: relative;
+    border: none;
+    overflow: hidden;
+    cursor: pointer;
+}
+.toggle-bg {
+    width: 0;
+    height: 100%;
+    transition: all .3s ease;
+}
+.toggle-round {
+    position: absolute;
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    box-shadow: inset 0 4px 4px 0 #ffffff25;
+    transform: translateX(0);
+    transition: all .3s ease;
+}
+.toggle.active .toggle-bg {
+    width: 100%;
+}
+.toggle.active .toggle-round {
+    transform: translateX(25px);
+}
+
+.modal-bg-image {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #0002;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all .3s ease;
+    padding: 20px;
+    z-index: 100;
+}
+.modal-bg-image.active {
+    display: flex;
+}
+.modal-bg-image-container {
+    width: 100%;
+    max-width: 693px;
+    padding: 20px 30px;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 35px;
+    user-select: none;
+}
+.modal-bg-image-title {
+    font-size: 20px;
+    width: 100%;
+    text-align: center;
+    font-weight: 600;
+}
+.modal-bg-image-content {
+    display: flex;
+    justify-content: space-between;
+    gap: 35px;
+}
+.modal-bg-image-content-item.tabs {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.modal-bg-image-tab {
+    border: 1px solid #FF4F00;
+    border-radius: 10px;
+    background-color: transparent;
+    padding: 5px 20px;
+    font-size: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    max-width: 125px;
+    width: 100%;
+}
+.modal-bg-image-tab.active {
+    background-color: #FF4F00;
+    color: #fff;
+}
+.modal-bg-image-content-item.cards {
+    display: none;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    width: 100%;
+    height: 100%;
+    max-height: 365px;
+    overflow: auto;
+    transition: all .3s ease;
+}
+.modal-bg-image-content-item.cards.all.active,
+.modal-bg-image-content-item.cards.light.active,
+.modal-bg-image-content-item.cards.dark.active
+{
+    display: grid;
+}
+.modal-bg-image-card {
+    overflow: hidden;
+    width: 100%;
+    height: 80px;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+.modal-bg-image-card img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    opacity: .8;
+    transition: all .3s ease;
+}
+.modal-bg-image-card.active::before {
+    content: 'Выбрано';
+    position: absolute;
+    border-radius: 10px;
+    padding: 5px 10px;
+    z-index: 4;
+}
+.modal-bg-image-card:hover img,
+.modal-bg-image-card.active img
+{
+    opacity: 1;
+}
+.modal-bg-image-btns {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    justify-content: center;
+    width: 100%;
+}
+.modal-bg-image-btn {
+    border: 1px solid #FF4F00;
+    border-radius: 15px;
+    background-color: transparent;
+    padding: 5px 20px;
+    font-size: 16px;
+}
+.modal-bg-image-btn.accept {
+    background-color: #FF4F00;
+    color: #fff;
+}
+.upload-bg-image {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background-color: #0001;
+    font-size: 16px;
+}
+
+/* TABLE */
+.setting-item-card-title.noactive .setting-item-card-title-image img {
+    opacity: .5;
+    transition: all .3s ease;
+}
+.setting-item-card-title.noactive span {
+    transition: all .3s ease;
+}
+.table-cols {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.table-cols-title {
+    font-size: 16px;
+    width: 100%;
+    text-align: left;
+}
+.table-cols-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+#available-fields .table-cols-item {
+    cursor: pointer;
+}
+#selected-fields .table-cols-item {
+    cursor: grab;
+}
+.table-cols-item {
+    padding: 2px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all .3s ease;
+}
+.table-cols-item:hover {
+    box-shadow: 0 4px 4px #0005;
+}
+.table-cols-item:active {
+  cursor: grabbing;
+}
+.table-cols-item span {
+    font-size: 16px;
+    color: #fff;
+    user-select: none;
+}
+
+/* SECURITY */
+#reset-settings {
+    width: 330px;
+    height: auto;
+    padding: 5px 10px;
+    font-size: 16px;
+    background-color: transparent;
+    border-radius: 15px;
+    border: 1px solid #ED7272;
+    color: #ED7272;
+    cursor: pointer;
+    background-color: transparent;
+    transition: all .3s ease;
+}
+#reset-settings:hover {
+    background-color: #ED7272;
+    color: #fff;
+}
+
+/* SUPPORT */
+.contact-cards {
+    display: flex;
+    gap: 15px;
+}
+.contact-image img {
+    width: 18px;
+    height: 19px;
+}
+.contact-items {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+.contact-item {
+    width: 280px;
+    display: flex;
+    justify-content: left;
+    gap: 15px;
+}
+.contact-item span {
+    font-size: 14px;
+    width: 100%;
+    white-space: nowrap;
+}
+.contact-item.title span {
+    font-size: 16px;
+}
+.support-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.support-content-text {
+    font-size: 16px;
+}
+.support-content-link {
+    border-radius: 10px;
+    width: 180px;
+    height: 40px;
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent;
+    transition: all .3s ease;
+}
+.support-content-link a {
+    font-size: 16px;
+    text-decoration: none;
+    transition: all .3s ease;
+}
+
+.modal-support {
+    position: fixed;
+    z-index: 100;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #0002;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+.modal-support.active {
+    display: flex;
+}
+.modal-support-content {
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    max-width: 400px;
+}
+.modal-support-title {
+    width: 100%;
+    text-align: center;
+}
+.modal-support-select,
+.modal-support-textarea {
+    background-color: #0001;
+    width: 100%;
+    border: none;
+    font-size: 16px;
+    padding: 5px 10px;
+    text-align: center;
+    border-radius: 10px;
+    outline: none;
+    z-index: 4;
+    position: relative;
+    color: #757575;
+    text-align: left;
+}
+.modal-support-textarea {
+    resize: none;
+}
+.modal-support-reason-btns {
+    width: 100%;
+    display: flex;
+    gap: 30px;
+    align-items: center;
+}
+.modal-support-reason-btn {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid #FF4F00;
+    border-radius: 15px;
+    background-color: transparent;
+    font-size: 16px;
+}
+.modal-support-reason-btn.send {
+    color: #fff;
+    background-color: #FF4F00;
+}
+
+/* OPEN DOCUMENT */
+.open-document_content {
+    width: 100%;
+    background-color: #fff;
+    height: 100%;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+.iframe-doc {
+    width: 100%;
+    height: 100%;
+    border: none;
+    outline: none;
+}
+
+
+.bg-invert {
+    position: absolute;
+    width: 100%;
+    height: 50%;
+    z-index: -1;
+}
+#btn-quit.mob {
+    display: none;
+}
+.btn-back {
+    position: absolute;
+    top: 5px;
+    left: 20px;
+    height: auto;
+    width: auto;
+    padding: 5px 10px;
+    text-decoration: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 4px #0001;
+}
+
+
+.modal-security {
+    display: none;
+}
+
+.now-open-document {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    justify-content: center;
+    align-items: center;
+    background-color: #0002;
+    padding: 20px;
+    z-index: 102;
+    display: none;
+}
+.now-open-document.active {
+    display: flex;
+}
+.now-open-document-content {
+    /* background-color: red; */
+    width: 100%;
+    max-width: 80%;
+    height: 100%;
+    position: relative;
+}
+.now-open-document-content-doc {
+    width: 100%;
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+.now-open-document-content iframe {
+    width: 100%;
+}
+#btn-close-now-open-document {
+    position: absolute;
+    top: -10px;
+    right: -20px;
+    background-color: #fff;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: none;
+    box-shadow: 0 4px 4px #0002;
+}
+
+
+
+
+@media ( max-width: 767px ) {
+    .sidebar.settings {
+        width: 100%;
+    }
+    .settings_container-header div {
+        padding: 0 0 0 50px;
+        align-items: center;
+        min-height: 40px;
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .setting-profile-cards {
+        gap: 20px;
+    }
+    .setting-profile-card {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        line-height: .9em;
+    }
+}
+@media ( max-width: 450px ) {
+    #settigs-btn-quit {
+        width: 100%;
+        height: 40px;
+    }
+}

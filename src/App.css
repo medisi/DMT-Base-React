@@ -1,0 +1,207 @@
+.main {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+.sidebar-logo-image-item-nosquare
+{
+  border-top: 3px solid #FF4F00;
+  border-left: 3px solid #FF4F00;
+  border-right: 3px solid #FF4F00;
+}
+.login-logo-image-item-nosquare {
+  border-top: 6px solid #FF4F00;
+  border-left: 6px solid #FF4F00;
+  border-right: 6px solid #FF4F00;
+}
+.sidebar-logo-image-item-line {
+  background-color: #FF4F00;
+}
+.login-logo-image-item-line {
+  background-color: #FF4F00;
+}
+.sidebar-logo-image-item-square {
+  border: 3px solid #FF4F00;
+}
+.login-logo-image-item-square {
+  border: 6px solid #FF4F00;
+}
+.sidebar-logo-text {
+  color: #FF4F00;
+}
+.login-logo-text {
+  color: #FF4F00;
+}
+#btn-quit {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  width: 20px;
+  height: 20px;
+  background-color: transparent;
+  border: none;
+  z-index: 5;
+}
+#btn-quit img {
+  width: 20px;
+  height: 20px;
+  opacity: .5;
+}
+#hidden-sidebar {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  overflow: hidden;
+  border-radius: 50%;
+  border: none;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1020;
+}
+#hidden-sidebar img {
+  width: 20px;
+  height: 20px;
+  opacity: .5;
+}
+#btn-settings-mobile {
+  width: 20px;
+  height: 30px;
+  border: none;
+  background-color: transparent;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  z-index: 101;
+}
+#btn-settings-mobile img {
+  width: 20px;
+  height: 20px;
+  opacity: .5;
+}
+.sidebar-userName-dataBase {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+  justify-content: center;
+}
+.sidebar-name-dataBase {
+  width: 100%;
+  text-align: center;
+  font-size: 14px;
+}
+#button-back {
+  position: absolute;
+  top: 40px;
+  left: 10px;
+  padding: 5px 10px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  width: 40px;
+  height: 25px;
+}
+.sidebar.settings #button-back {
+  top: 40px;
+  right: auto;
+  left: 10px;
+}
+#button-back img {
+  width: 20px;
+  height: 15px;
+}
+
+.bg-image {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+}
+.scattering {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 50%;
+}
+
+
+
+.bg-image {
+  z-index: 1;
+}
+.scattering {
+  z-index: 2;
+}
+.login-container,
+.sidebar,
+.settings_container,
+.main_content,
+.open_doc-container
+{
+  z-index: 3;
+}
+
+
+@media ( max-width: 767px ) {
+  #hidden-sidebar {
+    right: 20px;
+    display: flex;
+  }
+  .sidebar.hidden {
+    overflow: visible;
+    transition: all .3s ease;
+    transform: translateX(-100%);
+  }
+  .sidebar:not(.hidden) {
+    transition: all .3s ease;
+    transform: translateX(0%);
+  }
+  .sidebar.hidden #hidden-sidebar {
+    right: -60px;
+  }
+  .resize-handle {
+    display: none;
+  }
+  #btn-settings-mobile {
+    width: 30px;
+    height: 30px;
+    left: 20px;
+    top: 40px;
+    display: flex;
+  }
+  #btn-settings-mobile img {
+    width: 30px;
+    height: 30px;
+  }
+  .sidebar #button-back {
+    top: 40px;
+    right: 70px;
+    left: auto;
+    width: 45px;
+    height: 30px;
+  }
+  #button-back img {
+    width: 25px;
+    height: 20px;
+  }
+  #btn-quit {
+    top: 20px;
+    width: 30px;
+    height: 30px;
+  }
+  #btn-quit img {
+    width: 30px;
+    height: 30px;
+  }
+}

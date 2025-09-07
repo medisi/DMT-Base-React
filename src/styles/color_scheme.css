@@ -1,0 +1,232 @@
+/* ORANGE COLOR SCHEME */
+.main.orange .sidebar_menu-item-project:hover,
+.main.orange .sidebar_menu-item-project.active,
+.main.orange .sidebar-menu-history-item:not(.none):hover,
+.main.orange .sidebar-menu-history-item:not(.none).active
+{
+    background-color: #FF4F0020;
+}
+.main.orange .sidebar-item-block:hover,
+.main.orange .sidebar-item-block.active
+{
+    background-color: #FF4F0020;
+}
+.main.orange #button-login {
+    background-color: #FF4F00;
+    border: 1px solid #FF4F00;
+}
+@media (hover :hover) {
+    .main.orange #button-login:hover {
+        background-color: #FF4F0050;
+        border: 1px solid #FF4F0010;
+        color: hsl(0, 0%, 0%);
+    }
+}
+@media (hover :none) {
+    .main.orange #button-login:active {
+        background-color: #FF4F0050;
+        border: 1px solid #FF4F0010;
+        color: hsl(0, 0%, 0%);
+    }
+}
+.main.light.orange .sidebar_settings-menu-item.active {
+    background-color: #FF4F0040;
+}
+.main.dark.orange .sidebar_settings-menu-item.active {
+    background-color: #FF4F0080;
+}
+.main.orange .table-cols-item.active {
+    background-color: #FF4F00;
+}
+.main.orange .table-cols-item {
+    background-color: #FF4F0080;
+}
+.main.orange .table-body-row.selected
+{
+    background-color: #FF4F0030;
+}
+.main.orange .table-body-row.context-selected
+{
+    /* background-color: #FF4F0015; */
+    background-color: #FF4F0020;
+}
+.main.orange .main_content-panel-content-item table tbody tr:hover,
+.main.orange .main_content-panel-content-item table tbody tr.active,
+.main.orange tr.bg_row
+{
+    background-color: #FF4F0040;
+}
+
+/* BLUE COLOR SCHEME */
+.main.blue .sidebar_menu-item-project:hover,
+.main.blue .sidebar_menu-item-project.active,
+.main.blue .sidebar-menu-history-item:not(.none):hover,
+.main.blue .sidebar-menu-history-item:not(.none).active
+{
+    background-color: #7EBBF020;
+}
+.main.blue .sidebar-item-block:hover,
+.main.blue .sidebar-item-block.active
+{
+    background-color: #7EBBF020;
+}
+.main.blue #button-login {
+    background-color: #7EBBF0;
+    border: 1px solid #7EBBF0;
+}
+@media (hover :hover) {
+    .main.blue #button-login:hover {
+        background-color: #7EBBF050;
+        border: 1px solid #7EBBF010;
+        color: #000;
+    }
+}
+@media (hover :none) {
+    .main.blue #button-login:active {
+        background-color: #7EBBF050;
+        border: 1px solid #7EBBF010;
+        color: #000;
+    }
+}
+.main.light.blue .sidebar_settings-menu-item.active {
+    background-color: #7EBBF040;
+}
+.main.dark.blue .sidebar_settings-menu-item.active {
+    background-color: #7EBBF080;
+}
+.main.blue .table-cols-item.active {
+    background-color: #7EBBF0;
+}
+.main.blue .table-cols-item {
+    background-color: #7EBBF080;
+}
+.main.blue .table-body-row.selected
+{
+    background-color: #7EBBF040;
+}
+.main.blue .table-body-row.context-selected
+{
+    background-color: #7EBBF015;
+}
+.main.blue .main_content-panel-content-item table tbody tr:hover,
+.main.blue .main_content-panel-content-item table tbody tr.active,
+.main.blue tr.bg_row
+{
+    background-color: #7EBBF040;
+}
+
+/* GRAY COLOR SCHEME */
+.main.gray .sidebar_menu-item-project:hover,
+.main.gray .sidebar_menu-item-project.active,
+.main.gray .sidebar-menu-history-item:not(.none):hover,
+.main.gray .sidebar-menu-history-item:not(.none).active
+{
+    background-color: #91919120;
+}
+.main.gray .sidebar-item-block:hover,
+.main.gray .sidebar-item-block.active
+{
+    background-color: #91919120;
+}
+.main.gray #button-login {
+    background-color: #919191;
+    border: 1px solid #919191;
+}
+@media (hover :hover) {
+    .main.gray #button-login:hover {
+        background-color: #91919150;
+        border: 1px solid #91919110;
+        color: #000;
+    }
+}
+@media (hover :none) {
+    .main.gray #button-login:active {
+        background-color: #91919150;
+        border: 1px solid #91919110;
+        color: #000;
+    }
+}
+.main.light.gray .sidebar_settings-menu-item.active {
+    background-color: #91919140;
+}
+.main.dark.gray .sidebar_settings-menu-item.active {
+    background-color: #91919180;
+}
+.main.gray .table-cols-item.active {
+    background-color: #919191;
+}
+.main.gray .table-cols-item {
+    background-color: #91919180;
+}
+.main.gray .table-body-row.selected
+{
+    background-color: #91919140;
+}
+.main.gray .table-body-row.context-selected
+{
+    background-color: #91919115;
+}
+.main.gray .main_content-panel-content-item table tbody tr:hover,
+.main.gray .main_content-panel-content-item table tbody tr.active,
+.main.gray tr.bg_row
+{
+    background-color: #91919140;
+}
+
+/* GREEN COLOR SCHEME */
+.main.green .sidebar_menu-item-project:hover,
+.main.green .sidebar_menu-item-project.active,
+.main.green .sidebar-menu-history-item:not(.none):hover,
+.main.green .sidebar-menu-history-item:not(.none).active
+{
+    background-color: #4ad44a20;
+}
+.main.green .sidebar-item-block:hover,
+.main.green .sidebar-item-block.active
+{
+    background-color: #4ad44a20;
+}
+.main.green #button-login {
+    background-color: #4ad44a;
+    border: 1px solid #4ad44a;
+}
+@media (hover :hover) {
+    .main.green #button-login:hover {
+        background-color: #4ad44a50;
+        border: 1px solid #4ad44a10;
+        color: #000;
+    }
+}
+@media (hover :none) {
+    .main.green #button-login:active {
+        background-color: #4ad44a50;
+        border: 1px solid #4ad44a10;
+        color: #000;
+    }
+}
+.main.light.green .sidebar_settings-menu-item.active {
+    background-color: #4ad44a40;
+}
+.main.dark.green .sidebar_settings-menu-item.active {
+    background-color: #4ad44a80;
+}
+.main.green .table-cols-item.active {
+    background-color: #4ad44a;
+}
+.main.green .table-cols-item {
+    background-color: #4ad44a80;
+}
+.main.green .table-body-row.selected
+{
+    background-color: #4ad44a40;
+}
+.main.green .table-body-row.context-selected
+{
+    background-color: #4ad44a15;
+}
+.main.green .main_content-panel-content-item table tbody tr:hover,
+.main.green .main_content-panel-content-item table tbody tr.active,
+.main.green tr.bg_row
+{
+    background-color: #4ad44a40;
+}

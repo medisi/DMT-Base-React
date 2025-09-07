@@ -1,0 +1,363 @@
+/* LIGHT THEME */
+.main.light {
+    background-color: #EFEFEF;
+    color: #000;
+}
+.main.light .sidebar,
+.main.light .settings_container-content,
+.main.light .login_content form,
+.main.light .main_content-table,
+.main.light .main_content-panel,
+.main.light .about_project
+{
+    background-color: #fff;
+}
+.main.light.blur .sidebar,
+.main.light.blur .settings_container-content,
+.main.light.blur .login_content form,
+.main.light.blur .main_content-table,
+.main.light.blur .main_content-panel,
+.main.light.blur .about_project
+{
+    background-color: #fff7;
+    backdrop-filter: blur(20px);
+}
+
+.main.light .login_content form h1,
+.main.light .sidebar_menu-item-project span,
+.main.light .sidebar-item-block span
+{
+    color: #000;
+}
+.main.light .setting-profile-image-image,
+.main.light .setting-profile-image button,
+.main.light .sidebar-user-image
+{
+    background-color: #0001;
+    color: #000;
+}
+.main.light .support-content-link {
+    border: 1px solid #0005;
+    background-color: transparent;
+}
+.main.light .support-content-link a {
+    color: #0005;
+}
+.main.light .support-content-link:hover {
+    border: 1px solid #0001;
+    background-color: #0001;
+}
+.main.light .support-content-link:hover a {
+    color: #000;
+}
+.main.light .contact-item:not(.title) span {
+    color: #0005;
+}
+.main.light ::-webkit-scrollbar {
+    background-color: #0002;
+    width: 7px;
+    border-radius: 10px;
+}
+.main.light ::-webkit-scrollbar-thumb {
+    background-color: #0005;
+    border-radius: 10px;
+}
+.main.light .login-inputs {
+    color: #000;
+    background-color: #0001;
+}
+.main.light .sidebar-panel-item-btn
+{
+    background-color: #0001;
+}
+.main.light .list-btn,
+.main.light .select-list,
+.main.light #btn-search
+{
+    background-color: #fff8;
+    color: #000;
+}
+.main.light .setting-more-text {
+    color: #0005;
+}
+.main.light #btn-main-panel {
+    background-color: #00000015;
+}
+.main.light #hidden-sidebar {
+    background-color: #fff;
+    box-shadow: 0 0 4px #0002;
+}
+.main.light .setting-item-card-text select,
+.main.light .setting-item-card-text:not(.toggle-btn) button
+{
+    background-color: #FFF0F0;
+    box-shadow: 0 4px 4px 0 #00000025;
+    color: #000;
+}
+.main.light .sidebar-name-dataBase {
+  color: #0005;
+}
+.main.light .main_content-header-item-title {
+    color: #000;
+}
+.main.light .main_content-header-item-title.invert-text,
+.main.light .settings_container-header div span.invert-text
+{
+    color: #fff;
+}
+.main.light .modal-add-list-content,
+.main.light .modal-edit-list-content,
+.main.light .modal-delete-list-content,
+.main.light .modal-add-note-content,
+.main.light .modal-bg-image-container
+{
+    background-color: #FFF0F0;
+    box-shadow: 0 0 4px #0005;
+}
+.main.light #new-list,
+.main.light #edit-all-list,
+.main.light #edit-list,
+.main.light #old-list,
+.main.light #new-note
+{
+    color: #000;
+}
+.main.light .old-list-all,
+.main.light .edit-all
+{
+    background-color: #fff;
+    box-shadow: 0 4px 4px #0005;
+}
+.main.light .error-modal,
+.main.light #button-back 
+{
+    background-color: #fff;
+    box-shadow: 0 4px 4px #0002;
+}
+.main.light .open_document-header,
+.main.light .open_document-main
+{
+    background-color: #fff;
+}
+.main.light.scatt .scattering {
+  background: linear-gradient(to bottom, #fff5, #fff0);
+}
+.main.light .main_content-table table {
+    border-color: #0004;
+}
+.main.light .about_project-item-text {
+    background-color: #0001;
+}
+.main.light .modal-bg-image-card.active::before {
+    background-color: #fff;
+}
+.main.light .modal-bg-image-btn.delete,
+.main.light .modal-bg-image-btn.cancel {
+    color: #000;
+}
+.main.light #button-login {
+    color: #fff;
+}
+.main.light .main-table thead tr th:not(:last-child)::before {
+    background-color: #0002;
+}
+.main.light .sidebar-panel-item-btn.history.active,
+.main.light .sidebar-panel-item-btn.favorites.active
+{
+    background-color: rgba(250, 250, 126, .5);
+}
+
+/* DARK THEME */
+.main.dark {
+    background-color: #222222;
+    color: #fff;
+}
+.main.dark .sidebar,
+.main.dark .settings_container-content,
+.main.dark .login_content form,
+.main.dark .main_content-table,
+.main.dark .main_content-panel,
+.main.dark .about_project
+{
+    background-color: #3A3A3A;
+}
+.main.dark.blur .sidebar,
+.main.dark.blur .settings_container-content,
+.main.dark.blur .login_content form,
+.main.dark.blur .main_content-table,
+.main.dark.blur .main_content-panel,
+.main.dark.blur .about_project
+{
+    background-color: #3A3A3A70;
+    backdrop-filter: blur(20px);
+}
+.main.dark img {
+    filter: invert(100%);
+}
+.main.dark .login_content form h1,
+.main.dark .sidebar_menu-item-project span,
+.main.dark .sidebar-item-block span
+{
+    color: #fff;
+}
+.main.dark .setting-profile-image-image,
+.main.dark .setting-profile-image button,
+.main.dark .sidebar-user-image
+{
+    background-color: #fff1;
+    color: #fff;
+}
+.main.dark .support-content-link {
+    border: 1px solid #fff5;
+}
+.main.dark .support-content-link a {
+    color: #fff5;
+}
+.main.dark .support-content-link:hover {
+    border: 1px solid #fff1;
+    background-color: #fff1;
+}
+.main.dark .support-content-link:hover a {
+    color: #fff;
+}
+.main.dark .contact-item:not(.title) span {
+    color: #fff5;
+}
+.main.dark ::-webkit-scrollbar {
+    background-color: #0005;
+    width: 7px;
+    border-radius: 10px;
+}
+.main.dark ::-webkit-scrollbar-thumb {
+    background-color: #fff8;
+    border-radius: 10px;
+}
+.main.dark .login-inputs {
+    color: #fff;
+    background-color: #fff1;
+}
+.main.dark .sidebar-panel-item-btn
+{
+    background-color: #0008;
+}
+.main.dark .list-btn,
+.main.dark .select-list,
+.main.dark #btn-search
+{
+    background-color: #3A3A3A;
+    color: #fff;
+}
+.main.dark .setting-more-text {
+    color: #fff5;
+}
+.main.dark #btn-main-panel {
+    background-color: #ffffff15;
+}
+.main.dark #hidden-sidebar {
+    background-color: #3A3A3A;
+    box-shadow: 0 0 4px #fff2;
+}
+.main.dark .setting-item-card-text select,
+.main.dark .setting-item-card-text:not(.toggle-btn) button,
+.main.dark .setting-item-card-text select option
+{
+    background-color: #545454;
+    box-shadow: 0 4px 4px 0 #00000025;
+    color: #fff;
+}
+.main.dark .sidebar-name-dataBase {
+  color: #fff5;
+}
+.main.dark .main_content-header-item-title {
+    color: #fff;
+}
+.main.dark .main_content-header-item-title.invert-text,
+.main.dark .settings_container-header div span.invert-text {
+    color: #000;
+}
+.main.dark .modal-add-list-content,
+.main.dark .modal-edit-list-content,
+.main.dark .modal-delete-list-content,
+.main.dark .modal-add-note-content,
+.main.dark .modal-bg-image-container
+{
+    background-color: #3A3A3A;
+    box-shadow: 0 0 4px #fff5;
+}
+.main.dark #new-list,
+.main.dark #edit-all-list,
+.main.dark #edit-list,
+.main.dark #old-list,
+.main.dark #new-note
+{
+    color: #fff;
+    background-color: #fff1;
+}
+.main.dark .old-list-all,
+.main.dark .edit-all
+{
+    background-color: #3A3A3A;
+    box-shadow: 0 4px 4px #fff5;
+}
+.main.dark #modal-btn-add-cancel,
+.main.dark #modal-btn-edit-cancel,
+.main.dark #modal-btn-delete-cancel {
+    color: #fff;
+}
+.main.dark .error-modal,
+.main.dark #button-back
+{
+    background-color: #3A3A3A;
+    box-shadow: 0 4px 4px #0005;
+}
+.main.dark .col-star img,
+.main.dark #btn-favorite .btn-favorite-star-fav,
+.main.dark .bg-image img,
+.main.dark .modal-bg-image-card img
+{
+    filter: invert(0%);
+}
+.main.dark .open_document-header,
+.main.dark .open_document-main
+{
+    background-color: #3A3A3A;
+}
+.main.dark.scatt .scattering {
+  background: linear-gradient(to bottom, #3a3a3a80, #3a3a3a00);
+}
+.main.dark .main_content-table table {
+    border-color: #fff4;
+}
+.main.dark .about_project-item-text {
+    background-color: #fff1;
+}
+.main.dark .modal-bg-image-card.active::before {
+    background-color: #3A3A3A;
+}
+.main.dark .modal-bg-image-btn.delete,
+.main.dark .modal-bg-image-btn.cancel {
+    color: #fff;
+}
+.main.dark #button-login,
+.main.dark #button-login:hover
+{
+    color: #fff;
+}
+.main.dark .main-table thead tr th:not(:last-child)::before {
+    background-color: #fff3;
+}
+.main.dark .sidebar-panel-item-btn.history.active,
+.main.dark .sidebar-panel-item-btn.favorites.active
+{
+    background-color: rgba(241, 241, 124, .5);
+}
+.main.dark .sidebar-panel-item-btn.history:hover img,
+.main.dark .sidebar-panel-item-btn.favorites:hover img
+{
+    filter: invert(0%);
+}
+.main.dark .sidebar-panel-item-btn.history.active img,
+.main.dark .sidebar-panel-item-btn.favorites.active img
+{
+    filter: invert(0%);
+}
