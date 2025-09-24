@@ -169,6 +169,22 @@ const AllDocuments = () => {
         status: row => row.status,
     };
 
+    const columnAlignments = {
+        id: 'right',
+        size: 'right',
+        version: 'center',
+        version_ext: 'center',
+        created: 'center',
+        edited: 'center',
+        sheet: 'center',
+        status: 'center',
+        code: 'left',
+        nameTop: 'left',
+        nameBottom: 'left',
+        whomCreated: 'left',
+        whomEdited: 'left',
+    };
+
     const [allRows, setAllRows] = useState([]);
 
     useEffect(() => {
@@ -1737,7 +1753,7 @@ const AllDocuments = () => {
                                 <th
                                     key={key}
                                     className={['id', 'version_ext', 'created', 'edited'].includes(key) ? 'cell-row-small styled-text' : 'styled-text'}
-                                    style={{ width: columnWidths[key] }}
+                                    style={{ width: columnWidths[key], textAlign: columnAlignments[key] }}
                                 >
                                     <div style={{ position: 'relative', userSelect: 'none' }}>
                                         {columnLabels[key]}
@@ -1812,9 +1828,8 @@ const AllDocuments = () => {
                                             <td
                                                 key={key}
                                                 className={['id', 'version_ext', 'created', 'edited'].includes(key) ? 'styled-text' : 'styled-text'}
-                                                style={{ width: columnWidths[key], overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                                                style={{width: columnWidths[key], overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', textAlign: columnAlignments[key] }}
                                             >
-                                                {/* {key === 'version_ext' && console.log(`Rendering version_ext for row ${row.id}: "${row.version_ext}"`)} */}
                                                 {columnRenderers[key] ? columnRenderers[key](row) : null}
                                             </td>
                                         ))}

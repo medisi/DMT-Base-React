@@ -993,6 +993,16 @@ html {
     font-size: 20px;
 }
 
+.table-td-text-alight-right {
+    text-align: right;
+}
+.table-td-text-alight-center {
+    text-align: center;
+}
+.table-td-text-alight-left {
+    text-align: left;
+}
+
 @media ( min-width: 768px ) {
     .modal-info-row-card-item:not(:last-child)::before {
         position: absolute;
