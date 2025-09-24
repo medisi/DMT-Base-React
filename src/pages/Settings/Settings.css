@@ -748,7 +748,96 @@
 
 
 .modal-security {
-    display: none;
+    position: fixed;
+    z-index: 10;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #0002;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+.modal-security-content {
+    padding: 20px;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    max-width: 350px;
+}
+.modal-security-title {
+    width: 100%;
+    text-align: center;
+    font-size: 16px;
+}
+.modal-security-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.modal-security-form-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.modal-security-form-input {
+    display: flex;
+    width: 100%;
+    position: relative;
+}
+.modal-security-form-inputs input {
+    width: 100%;
+    border-radius: 10px;
+    border: none;
+    padding: 5px 10px;
+    font-size: 16px;
+}
+.modal-security-form-input-icon {
+    position: absolute;
+    top: 8px;
+    right: 15px;
+    overflow: hidden;
+    width: 25px;
+    height: 15px;
+    cursor: pointer;
+}
+/* .modal-security-form-input-icon.active {
+    right: 55px;
+} */
+.modal-security-form-input-icon img {
+    width: 25px;
+    height: 15px;
+}
+.modal-security-form-btns {
+    display: flex;
+    width: 100%;
+    gap: 10px;
+}
+.modal-security-form-btn {
+    width: 100%;
+    border-radius: 10px;
+    padding: 5px 10px;
+    font-size: 16px;
+}
+.modal-security-form-btn.edit {
+    color: #fff;
+    transition: all .3s ease;
+}
+@media (hover :hover) {
+    .modal-security-form-btn.edit:hover {
+        box-shadow: 0 0 7px #FF4F00;
+    }
+}
+@media (hover :active) {
+    .modal-security-form-btn.edit:active {
+        box-shadow: 0 0 7px #FF4F00;
+    }
 }
 
 .now-open-document {
@@ -818,6 +907,13 @@
         flex-direction: column;
         gap: 5px;
         line-height: .9em;
+    }
+    #reset-settings {
+        width: 100%;
+    }
+    .setting-item-card {
+        flex-wrap: wrap;
+        gap: 20px;
     }
 }
 @media ( max-width: 450px ) {

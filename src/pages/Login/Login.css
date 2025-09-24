@@ -1,11 +1,9 @@
 .login-container {
     width: 100%;
     height: 100%;
-    /* display: flex; */
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: 100px 1fr 100px;
-    /* flex-direction: column; */
     gap: 0px;
     justify-content: center;
     align-items: center;
@@ -18,7 +16,20 @@
     width: 100%;
     display: flex;
     justify-content: center;
-    /* height: 100%; */
+    animation: moveLoginContent .7s ease forwards;
+    animation-delay: 1s;
+    transform: translateY(40px);
+    opacity: 0;
+}
+@keyframes moveLoginContent {
+    from {
+        transform: translateY(40px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0); 
+        opacity: 1;
+    }
 }
 .login_content form {
     border-radius: 15px;
@@ -76,10 +87,7 @@
     margin-top: 10px;
     transition: all .3s ease;
 }
-
 .login-header {
-    /* position: sticky;
-    top: 40px; */
     padding: 0 20px;
     width: 100%;
     height: 200px;
@@ -88,7 +96,6 @@
     justify-content: flex-end;
     align-items: center;
     gap: 10px;
-    /* border: 1px solid red; */
 }
 .login-logo {
     overflow: hidden;
@@ -98,6 +105,10 @@
     align-items: center;
     gap: 5px;
 }
+.login-logo img {
+    height: 100%;
+}
+
 .login-logo-image {
     display: flex;
     flex-direction: column;

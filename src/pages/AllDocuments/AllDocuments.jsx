@@ -1,9 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, version } from 'react';
 import './AllDocuments.css';
 import { Link, useHref, useNavigate, useParams } from 'react-router-dom';
 import ProjectTree from '../../components/ProjectTree/ProjectTree';
 import NameDatabase from '../../components/NameDatabase/NameDatabase';
-import { getDocuments } from '../../api';
+import { getDocuments, getDocumentVersions } from '../../api';
 import { useAuth } from '../../AuthContext';
 import NameUser from '../../components/NameUser/NameUser';
 import FavoritesTree from '../../components/FavoritesTree/FavoritesTree';
@@ -21,7 +21,7 @@ const defaultSettings = {
     panelVisible: 'visible',
     borderTable: 'false',
     bgRow: 'false',
-    columsTable: ['id', 'code', 'version', 'nameTop', 'nameBottom', 'created', 'whomCreated', 'edited', 'whomEdited']
+    columsTable: ['id', 'code', 'version_ext', 'nameTop', 'nameBottom', 'created', 'whomCreated', 'edited', 'whomEdited']
 };
 
 // Загрузка настроек из localStorage
@@ -95,21 +95,13 @@ const AllDocuments = () => {
         localStorage.setItem('selectTreeDocs', JSON.stringify(''));
     };
 
-    // const handleRowDoubleClick = (row) => {
-    //     navigate(`/open_document/${encodeURIComponent(row.nameBottom)}?prevPage=all_documents/${encodeURIComponent(projectId)}/${encodeURIComponent(projectName)}`);
-    // };
-
-    // const handleViewClick = () => {
-    //     if (currentRow) {
-    //         navigate(`/open_document/${encodeURIComponent(currentRow.nameBottom)}?prevPage=all_documents/${encodeURIComponent(projectId)}/${encodeURIComponent(projectName)}`);
-    //         handleCloseContextMenu(); // Закрыть модальное окно после перехода
-    //     }
-    // };
     const handleRowDoubleClick = (row) => {
+        addToHistoryList(row);
         navigate(`/open_document/${encodeURIComponent(row.nameBottom)}?documentId=${row.id}&prevPage=all_documents/${encodeURIComponent(projectId)}/${encodeURIComponent(projectName)}`);
     };
     const handleViewClick = () => {
         if (currentRow) {
+            addToHistoryList(currentRow);
             navigate(`/open_document/${encodeURIComponent(currentRow.nameBottom)}?documentId=${currentRow.id}&prevPage=all_documents/${encodeURIComponent(projectId)}/${encodeURIComponent(projectName)}`);
             handleCloseContextMenu();
         }
@@ -120,22 +112,36 @@ const AllDocuments = () => {
     };
     const buttonBack = () => {
         localStorage.setItem('selectTreeDocs', JSON.stringify(''));
+        localStorage.setItem('selectRow', JSON.stringify(''));
     }
     
     // отображение колонок
-    // В начале компонента AllDocuments
-    const [selectedColumns, setSelectedColumns] = useState(settings.columsTable || defaultSettings.columsTable);
-    // При изменении настроек (например, если settings.columsTable меняется), синхронизируем selectedColumns
-    useEffect(() => {
-        if (settings.columsTable) {
-            setSelectedColumns(settings.columsTable);
+    const desktopColumns = settings.columsTable || defaultSettings.columsTable;
+    const mobileColumns = ['id', 'nameBottom', 'nameTop', 'code', 'version_ext', 'created', 'whomCreated', 'edited', 'whomEdited'];
+
+    // const [selectedColumns, setSelectedColumns] = useState(settings.columsTable || defaultSettings.columsTable);
+    const [selectedColumns, setSelectedColumns] = useState(() => {
+        if (window.innerWidth < 768) {
+            // Для мобильных устройств
+            // Можно фильтровать mobileColumns, чтобы оставить только те, что есть в настройках
+            return mobileColumns.filter(col => desktopColumns.includes(col));
+        } else {
+            return desktopColumns;
         }
-    }, [settings.columsTable]);
+    });
+    useEffect(() => {
+        if (window.innerWidth < 768) {
+            setSelectedColumns(mobileColumns.filter(col => desktopColumns.includes(col)));
+        } else {
+            setSelectedColumns(desktopColumns);
+        }
+    }, [desktopColumns]);
     // Маппинг ключей колонок к заголовкам (учитываем lang)
     const columnLabels = {
         id: lang === 'ru' ? 'ID' : 'ID',
         code: lang === 'ru' ? 'Шифр' : 'Code',
         version: lang === 'ru' ? 'Вер. внутр.' : 'Internal version',
+        version_ext: lang === 'ru' ? 'Вер. внеш.' : 'External version',
         nameTop: lang === 'ru' ? 'Название верхнее' : 'Upper name',
         nameBottom: lang === 'ru' ? 'Название нижнее' : 'Lower name',
         created: lang === 'ru' ? 'Создан' : 'Created',
@@ -150,7 +156,8 @@ const AllDocuments = () => {
     const columnRenderers = {
         id: row => row.id,
         code: row => row.code,
-        version: row => row.version,
+        version: row => row.version || '-',
+        version_ext: row => row.version_ext || '-',
         nameTop: row => row.nameTop,
         nameBottom: row => row.nameBottom,
         created: row => row.created,
@@ -162,34 +169,6 @@ const AllDocuments = () => {
         status: row => row.status,
     };
 
-    // const loadAllDocuments = async (selectedTypeIds = []) => {
-    //     try {
-    //         const documents = await getDocuments(token, projectId);
-    //         const transformedDocuments = documents
-    //             .filter(doc => selectedTypeIds.length === 0 || selectedTypeIds.includes(doc.id_type)) 
-    //             .map(doc => ({
-    //                 id: doc.id,
-    //                 id_type: doc.id_type,
-    //                 code: doc.code,
-    //                 version: doc.version,
-    //                 nameTop: doc.nametop,
-    //                 nameBottom: doc.name,
-    //                 created: formatDate(doc.crdate),
-    //                 createdBy: doc.cruser.name,
-    //                 edited: formatDate(doc.edit_date),
-    //                 editedBy: doc.edit_user.name,
-    //             }));
-
-    //             // Сортировка по id
-    //             transformedDocuments.sort((a, b) => a.id - b.id);
-                
-    //             setAllRows(transformedDocuments);
-    //             setFilteredRows(transformedDocuments);
-    //     } catch (error) {
-    //         // console.error('Error fetching documents:', error);
-    //     }
-    // };
-
     const [allRows, setAllRows] = useState([]);
 
     useEffect(() => {
@@ -198,35 +177,24 @@ const AllDocuments = () => {
             const transformed = documents.map(doc => ({
                 id: doc.id,
                 id_type: doc.id_type,
+                id_common: doc.id_common,
                 code: doc.code,
-                version: doc.version,
+                // version_ext: doc.version_ext || '-',
+                version: doc.version || '-',  // ← Добавьте, если API имеет doc.version
+                version_ext: doc.version_ext != null ? doc.version_ext : '-',
                 nameTop: doc.nametop,
                 nameBottom: doc.name,
                 created: formatDate(doc.crdate),
                 createdBy: doc.cruser.name,
                 edited: formatDate(doc.edit_date),
                 editedBy: doc.edit_user.name,
+                comments: doc.comments,
             }));
             setAllRows(transformed);
         };
         load();
     }, [token, projectId]);
 
-    // useEffect(() => {
-    //     if (filterSource === 'tree') {
-    //         if (selectedFilterIds.length === 0) {
-    //             setFilteredRows(allRows);
-    //         } else {
-    //             setFilteredRows(allRows.filter(row => selectedFilterIds.includes(row.id_type)));
-    //         }
-    //     } else if (filterSource === 'history') {
-    //         if (selectedFilterIds.length === 0) {
-    //             setFilteredRows(allRows);
-    //         } else {
-    //             setFilteredRows(allRows.filter(row => selectedFilterIds.includes(row.id_type)));
-    //         }
-    //     }
-    // }, [filterSource, selectedFilterIds, allRows]);
     useEffect(() => {
         if (filterSource === 'tree' || filterSource === 'history' || filterSource === 'favorites') {
             if (selectedFilterIds.length === 0) {
@@ -237,22 +205,18 @@ const AllDocuments = () => {
         }
     }, [filterSource, selectedFilterIds, allRows]);
 
-    // useEffect(() => {
-    //     loadAllDocuments(); // Вызываем без параметров для первоначальной загрузки
-    // }, [projectId]);
 
     const handleProjectSelect = async (selectedIds) => {
         setFilterSource('tree');
         setSelectedFilterIds(selectedIds);
         // await loadAllDocuments(selectedIds);
+        setIsHistoryActive(false); // сброс сортировки по истории при смене ветки
     };
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         return `${String(date.getDate()).padStart(2, '0')}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
     };
-
-    
 
     // работа со списками
     const [lists, setLists] = useState([]);
@@ -337,15 +301,6 @@ const AllDocuments = () => {
         document.addEventListener('mousemove', onMouseMoveResize);
         document.addEventListener('mouseup', onMouseUpResize);
     };
-    // const onMouseMoveResize = (e) => {
-    //     if (!resizingCol.current) return;
-    //     const deltaX = e.clientX - startX.current;
-    //     const newWidth = Math.max(50, startWidth.current + deltaX);
-    //     setColumnWidths(prev => ({
-    //         ...prev,
-    //         [resizingCol.current]: newWidth,
-    //     }));
-    // };
     const onMouseMoveResize = (e) => {
         if (!resizingCol.current) return;
         const deltaX = e.clientX - startX.current;
@@ -364,6 +319,34 @@ const AllDocuments = () => {
         resizingCol.current = null;
         document.removeEventListener('mousemove', onMouseMoveResize);
         document.removeEventListener('mouseup', onMouseUpResize);
+    };
+    const onTouchStartResize = (e, key) => {
+        e.preventDefault();
+        resizingCol.current = key;
+        startX.current = e.touches[0].clientX;
+        startWidth.current = columnWidths[key] || 150;
+        document.addEventListener('touchmove', onTouchMoveResize, { passive: false });
+        document.addEventListener('touchend', onTouchEndResize);
+    };
+    const onTouchMoveResize = (e) => {
+        if (!resizingCol.current) return;
+        e.preventDefault(); // предотвращаем скролл страницы при перетаскивании
+        const deltaX = e.touches[0].clientX - startX.current;
+        const newWidth = Math.max(50, startWidth.current + deltaX);
+        setColumnWidths(prev => {
+            const updated = { ...prev, [resizingCol.current]: newWidth };
+            try {
+                localStorage.setItem(COLUMN_WIDTHS_STORAGE_KEY, JSON.stringify(updated));
+            } catch (e) {
+                console.warn('Ошибка сохранения ширин колонок в localStorage', e);
+            }
+            return updated;
+        });
+    };
+    const onTouchEndResize = () => {
+        resizingCol.current = null;
+        document.removeEventListener('touchmove', onTouchMoveResize);
+        document.removeEventListener('touchend', onTouchEndResize);
     };
     
     
@@ -414,6 +397,7 @@ const AllDocuments = () => {
                 (row.code && row.code.toLowerCase().includes(lowerSearch)) ||
                 (row.nameTop && row.nameTop.toLowerCase().includes(lowerSearch)) ||
                 (row.nameBottom && row.nameBottom.toLowerCase().includes(lowerSearch)) ||
+                (row.version_ext && row.version_ext.toLowerCase().includes(lowerSearch)) ||
                 String(row.id).includes(lowerSearch) ||
                 (row.createdBy && row.createdBy.toLowerCase().includes(lowerSearch)) ||
                 (row.editedBy && row.editedBy.toLowerCase().includes(lowerSearch))
@@ -455,7 +439,8 @@ const AllDocuments = () => {
             e.target.closest('#btn-settings') ||
             e.target.closest('#btn-settings-mobile') ||
             e.target.closest('.sidebar') ||
-            e.target.closest('.modal-info-row')
+            e.target.closest('.modal-info-row') ||
+            e.target.closest('.main_content-panel')
         ) {
             return;
         }
@@ -658,11 +643,74 @@ const AllDocuments = () => {
             setSelectedRows([savedSelectedRowId]); // Если вы используете массив для выделенных строк
         }
     }, []);
-    const handleRowSelect = (id, e) => {
+
+    const [historyList, setHistoryList] = useState(() => {
+        const saved = localStorage.getItem('historyList');
+        return saved ? JSON.parse(saved) : [];
+    });
+    const addToHistoryList = (row) => {
+        setHistoryList(prev => {
+            const filtered = prev.filter(item => item.id !== row.id);
+            const updated = [...filtered, { id: row.id, id_type: row.id_type }];
+            if (updated.length > 20) updated.shift(); // максимум 20
+            localStorage.setItem('historyList', JSON.stringify(updated));
+            return updated;
+        });
+    };
+
+    const [currentVersions, setCurrentVersions] = useState([]);
+
+    const handleRowSelect = async (id, e) => {
         e.stopPropagation();
         setSelectedRowId(id);
 
         localStorage.setItem('selectRow', JSON.stringify(id));
+
+        const selectedRow = filteredRows.find(row => row.id === id);
+        setCurrentRow(selectedRow);
+
+        if (selectedRow) {
+        // Все документы с таким же id_common из allRows
+        const relatedDocs = allRows.filter(row => row.id_common === selectedRow.id_common);
+        // Получаем версии из API для каждого документа
+        const versionsArrays = await Promise.all(
+            relatedDocs.map(doc => getDocumentVersions(token, doc.id))
+        );
+        // Объединяем версии из API в один массив
+        const apiVersions = versionsArrays.flat();
+        // Объединяем документы из allRows и версии из API
+        // Чтобы не было дубликатов, создаём Map по id
+        const combinedMap = new Map();
+        // Добавляем документы из allRows (текущие версии)
+        relatedDocs.forEach(doc => {
+            combinedMap.set(doc.id, {
+                id: doc.id,
+                version: doc.version,
+                version_ext: doc.version_ext || '-',
+                sentdate: doc.sentdate || null,
+                code: doc.code,
+                nametop: doc.nameTop,
+                name: doc.nameBottom,
+            });
+        });
+        // Добавляем версии из API (перезапишут, если совпадут id)
+        apiVersions.forEach(ver => {
+            combinedMap.set(ver.id, {
+                id: ver.id,
+                version: ver.version,
+                version_ext: ver.version_ext || '-',
+                sentdate: ver.sentdate || null,
+                code: ver.code,
+                nametop: ver.nametop,
+                name: ver.name,
+            });
+        });
+        // Преобразуем Map обратно в массив
+        const combinedVersions = Array.from(combinedMap.values());
+        setCurrentVersions(combinedVersions);
+    } else {
+        setCurrentVersions([]);
+    }
 
         if (e.button === 0) { // Левый клик
             if (ctrlPressed.current) {
@@ -713,24 +761,41 @@ const AllDocuments = () => {
     useEffect(() => {
         setOriginalRows(filteredRows);
     }, [filteredRows]);
+    
     // const toggleFavorites = () => {
     //     if (selectedRows.length === 0) {
     //         setError('Выберите минимум одну строку');
     //         setShowError(true);
-
     //         setTimeout(() => {
     //             setShowError(false);
     //             setError('');
     //         }, 3000);
-
     //         return;
     //     }
+    //     // favorites теперь массив объектов { projectId, id_type, id_common }
     //     const updatedFavorites = [...favorites];
-    //     selectedRows.forEach(id => {
-    //         if (updatedFavorites.includes(id)) {
-    //             updatedFavorites.splice(updatedFavorites.indexOf(id), 1);
+    //     selectedRows.forEach(selectedId => {
+    //         // Находим строку в filteredRows по id
+    //         const row = filteredRows.find(r => r.id === selectedId);
+    //         if (!row) return; // если не нашли, пропускаем
+    //         // Создаём объект ключа с id_common вместо id
+    //         const favKey = {
+    //             projectId: projectId,
+    //             id_type: row.id_type,
+    //             id: row.id_common  // заменили на id_common
+    //         };
+    //         // Проверяем, есть ли такой объект в favorites (по всем трём полям)
+    //         const index = updatedFavorites.findIndex(fav =>
+    //             fav.projectId === favKey.projectId &&
+    //             fav.id_type === favKey.id_type &&
+    //             fav.id === favKey.id
+    //         );
+    //         if (index !== -1) {
+    //             // Если есть — удаляем
+    //             updatedFavorites.splice(index, 1);
     //         } else {
-    //             updatedFavorites.push(id);
+    //             // Если нет — добавляем
+    //             updatedFavorites.push(favKey);
     //         }
     //     });
     //     setFavorites(updatedFavorites);
@@ -738,45 +803,42 @@ const AllDocuments = () => {
     //     setSelectedRows([]); // Сброс выделения после действия
     // };
     const toggleFavorites = () => {
-        if (selectedRows.length === 0) {
-            setError('Выберите минимум одну строку');
-            setShowError(true);
-            setTimeout(() => {
-                setShowError(false);
-                setError('');
-            }, 3000);
-            return;
+    if (selectedRows.length === 0) {
+        setError('Выберите минимум одну строку');
+        setShowError(true);
+        setTimeout(() => {
+            setShowError(false);
+            setError('');
+        }, 3000);
+        return;
+    }
+    const updatedFavorites = [...favorites];
+    selectedRows.forEach(selectedId => {
+        const row = filteredRows.find(r => r.id === selectedId);
+        if (!row) return;
+        const favKey = {
+            projectId: projectId,
+            id_type: row.id_type,
+            id: row.id_common  // используем id_common
+        };
+        const index = updatedFavorites.findIndex(fav =>
+            fav.projectId === favKey.projectId &&
+            fav.id_type === favKey.id_type &&
+            fav.id === favKey.id
+        );
+        if (index !== -1) {
+            updatedFavorites.splice(index, 1);
+        } else {
+            updatedFavorites.push(favKey);
         }
-        // favorites теперь массив объектов { projectId, id_type, id }
-        const updatedFavorites = [...favorites];
-        selectedRows.forEach(selectedId => {
-            // Находим строку в filteredRows по id
-            const row = filteredRows.find(r => r.id === selectedId);
-            if (!row) return; // если не нашли, пропускаем
-            // Создаём объект ключа
-            const favKey = {
-                projectId: projectId,
-                id_type: row.id_type,
-                id: row.id
-                };
-            // Проверяем, есть ли такой объект в favorites (по всем трём полям)
-            const index = updatedFavorites.findIndex(fav =>
-                fav.projectId === favKey.projectId &&
-                fav.id_type === favKey.id_type &&
-                fav.id === favKey.id
-            );
-            if (index !== -1) {
-                // Если есть — удаляем
-                updatedFavorites.splice(index, 1);
-            } else {
-                // Если нет — добавляем
-                updatedFavorites.push(favKey);
-            }
-        });
-        setFavorites(updatedFavorites);
-        localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
-        setSelectedRows([]); // Сброс выделения после действия
-    };
+    });
+    setFavorites(updatedFavorites);
+    localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
+    setSelectedRows([]);
+};
+
+
+
     const handleSortFavorites = () => {
         if (isSortedByFavorites) {
             if (filteredRowsBeforeSort) {
@@ -804,28 +866,50 @@ const AllDocuments = () => {
         setIsSortedByFavorites(!isSortedByFavorites);
     };
     const [hoveredRowId, setHoveredRowId] = useState(null);
+    // const toggleFavoriteSingle = (id) => {
+    //     const row = filteredRows.find(r => r.id === id);
+    //     if (!row) return;
+    //     const favKey = {
+    //         projectId: projectId,
+    //         id_type: row.id_type,
+    //         id: row.id_common  // заменили на id_common
+    //     };
+    //     const updatedFavorites = [...favorites];
+    //     const index = updatedFavorites.findIndex(fav =>
+    //         fav.projectId === favKey.projectId &&
+    //         fav.id_type === favKey.id_type &&
+    //         fav.id === favKey.id
+    //     );
+    //     if (index !== -1) {
+    //         updatedFavorites.splice(index, 1);
+    //     } else {
+    //         updatedFavorites.push(favKey);
+    //     }
+    //     setFavorites(updatedFavorites);
+    //     localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
+    // };
     const toggleFavoriteSingle = (id) => {
-        const row = filteredRows.find(r => r.id === id);
-        if (!row) return;
-        const favKey = {
-            projectId: projectId,
-            id_type: row.id_type,
-            id: row.id
-        };
-        const updatedFavorites = [...favorites];
-        const index = updatedFavorites.findIndex(fav =>
-            fav.projectId === favKey.projectId &&
-            fav.id_type === favKey.id_type &&
-            fav.id === favKey.id
-        );
-        if (index !== -1) {
-            updatedFavorites.splice(index, 1);
-        } else {
-            updatedFavorites.push(favKey);
-        }
-        setFavorites(updatedFavorites);
-        localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
+    const row = filteredRows.find(r => r.id === id);
+    if (!row) return;
+    const favKey = {
+        projectId: projectId,
+        id_type: row.id_type,
+        id: row.id_common  // используем id_common
     };
+    const updatedFavorites = [...favorites];
+    const index = updatedFavorites.findIndex(fav =>
+        fav.projectId === favKey.projectId &&
+        fav.id_type === favKey.id_type &&
+        fav.id === favKey.id
+    );
+    if (index !== -1) {
+        updatedFavorites.splice(index, 1);
+    } else {
+        updatedFavorites.push(favKey);
+    }
+    setFavorites(updatedFavorites);
+    localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
+};
 
    
 
@@ -1099,51 +1183,98 @@ const AllDocuments = () => {
         setPanelIsActive(true); // Убедитесь, что панель активна
     };
 
-
-    // const [selectedHistoryId, setSelectedHistoryId] = useState(null);
-    const [historyLists, setHistoryLists] = useState(() => {
-        const saved = localStorage.getItem('historyList');
-        return saved ? JSON.parse(saved) : [];
-    });
-
-    const [selectedHistoryId, setSelectedHistoryId] = useState(null);
-    const handleHistoryItemClick = (id) => {
-        setFilterSource('history');
-        setSelectedFilterIds([id]);
-        setSelectedHistoryId(id);
-    };
-    useEffect(() => {
-        if (!selectedHistoryId) {
-            setFilteredRows(allRows);
-        } else {
-            const filtered = allRows.filter(row => Number(row.id_type) === Number(selectedHistoryId));
-            setFilteredRows(filtered);
-        }
-    }, [selectedHistoryId, allRows]);
-
-    const handleHistoryUpdate = (updatedHistory) => {
-        setHistoryLists(updatedHistory);
-    };
-
     const [favoritesLists, setFavoritesLists] = useState(() => {
         const saved = localStorage.getItem('favorites');
         return saved ? JSON.parse(saved) : [];
     });
 
     const [sidebarNode, setSidebarMode] = useState('main');
-    const handleChangeHistory = () => {
-        setSidebarMode(prev => (prev === 'history' ? 'main' : 'history'));
+    const [isHistoryActive, setIsHistoryActive] = useState(false);
+    const handleHistoryButtonClick = () => {
+        setIsHistoryActive(prev => !prev);
+        // setSidebarMode(prev => (prev === 'history' ? 'main' : 'history'));
     };
     const handleChangeFavorites = () => {
         setSidebarMode(prev => (prev === 'favorites' ? 'main' : 'favorites'));
     };
+    // useEffect(() => {
+    //     if (isHistoryActive) {
+    //         // Фильтруем и сортируем filteredRows по истории
+    //         const savedHistory = JSON.parse(localStorage.getItem('historyList')) || [];
+    //         if (savedHistory.length === 0) return; // если истории нет, ничего не делаем
+    //         // Фильтруем по выбранной ветке (selectedFilterIds)
+    //         let filteredByBranch = [];
+    //         if (selectedFilterIds.length === 0) {
+    //             filteredByBranch = allRows;
+    //         } else {
+    //             filteredByBranch = allRows.filter(row => selectedFilterIds.includes(row.id_type));
+    //         }
+    //         // Сортируем filteredByBranch так, чтобы последние просмотренные были сверху
+    //         const historyIds = savedHistory.map(item => item.id).reverse();
+
+    //         const sorted = [...filteredByBranch].sort((a, b) => {
+    //             const aIndex = historyIds.indexOf(a.id);
+    //             const bIndex = historyIds.indexOf(b.id);
+    //             if (aIndex === -1 && bIndex === -1) return 0;
+    //             if (aIndex === -1) return 1;
+    //             if (bIndex === -1) return -1;
+    //             return aIndex - bIndex;
+    //         });
+    //         setFilteredRows(sorted);
+    // } else {
+    //         // При выключении истории возвращаем фильтр по ветке без сортировки по истории
+    //         if (selectedFilterIds.length === 0) {
+    //             setFilteredRows(allRows);
+    //         } else {
+    //             setFilteredRows(allRows.filter(row => selectedFilterIds.includes(row.id_type)));
+    //         }
+    //     }
+    // }, [isHistoryActive, selectedFilterIds, allRows]);
+    useEffect(() => {
+    if (isHistoryActive) {
+        const savedHistory = JSON.parse(localStorage.getItem('historyList')) || [];
+        if (savedHistory.length === 0) {
+            setFilteredRows([]); // если истории нет, показываем пустой список
+            return;
+        }
+
+        // Получаем id из истории в обратном порядке (последние сверху)
+        const historyIdsReversed = savedHistory.map(item => item.id).reverse();
+
+        // Фильтруем allRows по выбранной ветке (selectedFilterIds), если есть фильтр
+        let filteredByBranch = [];
+        if (selectedFilterIds.length === 0) {
+            filteredByBranch = allRows;
+        } else {
+            filteredByBranch = allRows.filter(row => selectedFilterIds.includes(row.id_type));
+        }
+
+        // Оставляем только те строки, id которых есть в истории
+        const filteredByHistory = filteredByBranch.filter(row => historyIdsReversed.includes(row.id));
+
+        // Сортируем по порядку в истории (последние сверху)
+        const sorted = filteredByHistory.sort((a, b) => {
+            return historyIdsReversed.indexOf(a.id) - historyIdsReversed.indexOf(b.id);
+        });
+
+        setFilteredRows(sorted);
+    } else {
+        // При выключении истории возвращаем фильтр по ветке без сортировки по истории
+        if (selectedFilterIds.length === 0) {
+            setFilteredRows(allRows);
+        } else {
+            setFilteredRows(allRows.filter(row => selectedFilterIds.includes(row.id_type)));
+        }
+    }
+}, [isHistoryActive, selectedFilterIds, allRows]);
+
 
     const rowsToDisplay = sidebarNode === 'favorites'
     ? filteredRows.filter(row =>
         favorites.some(fav =>
             fav.projectId === projectId &&
             fav.id_type === row.id_type &&
-            fav.id === row.id
+            fav.id === row.id_common
         )
         )
     : filteredRows;
@@ -1153,10 +1284,52 @@ const AllDocuments = () => {
         setSelectedFilterIds([idType]);
     };
 
+
+    const videoLogoRef = useRef(null);
+    useEffect(() => {
+        if (videoLogoRef.current) {
+            videoLogoRef.current.playbackRate = 3.0;
+        }
+    }, []);
+
+    // Refs для сайдбара и resize-handle
+    const sidebarRef = useRef(null);
+    const resizeHandleRef = useRef(null);
+    
+    // Функции для обработки ресайза
+    const handleMouseDown = (e) => {
+        e.preventDefault();
+        document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseup', handleMouseUp);
+    };
+    const handleMouseMove = (e) => {
+        if (sidebarRef.current && !isSidebarHidden) {
+            const rect = sidebarRef.current.getBoundingClientRect();
+            const newWidth = e.clientX - rect.left;
+            // Ограничиваем ширину между min (200px) и max (400px)
+            const clampedWidth = Math.max(200, Math.min(400, newWidth));
+            sidebarRef.current.style.width = clampedWidth + 'px';
+        }
+    };
+    const handleMouseUp = () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+    };
+    // Добавляем обработчики событий для resize-handle
+    useEffect(() => {
+        const handle = resizeHandleRef.current;
+        if (handle) {
+            handle.addEventListener('mousedown', handleMouseDown);
+            return () => {
+                handle.removeEventListener('mousedown', handleMouseDown);
+            };
+        }
+    }, [isSidebarHidden]); // Перерегистрируем при изменении видимости сайдбара
+
     return (
         <>
-            <div className={`sidebar ${isSidebarHidden ? 'hidden' : ''}`}>
-                 <div className="resize-handle"></div>
+            <div className={`sidebar ${isSidebarHidden ? 'hidden' : ''}`} ref={sidebarRef} style={{ width: isSidebarHidden ? '0px' : undefined }}>
+                 <div className="resize-handle" ref={resizeHandleRef}></div>
                  <button
                     id="hidden-sidebar"
                     onClick={toggleSidebar}
@@ -1173,18 +1346,9 @@ const AllDocuments = () => {
                 </Link>
 
                 <Link to="/home" className='sidebar-logo' onClick={buttonBack}>
-                    <div className="sidebar-logo-image">
-                        <div className="sidebar-logo-image-item">
-                            <div className="sidebar-logo-image-item-nosquare"></div>
-                        </div>
-                        <div className="sidebar-logo-image-item">
-                            <div className="sidebar-logo-image-item-line"></div>
-                        </div>
-                        <div className="sidebar-logo-image-item">
-                            <div className="sidebar-logo-image-item-square"></div>
-                        </div>
-                    </div>
-                    <div className="sidebar-logo-text">DMT<br />Base</div>
+                    <video autoPlay muted className='video-logo' ref={videoLogoRef}>
+                        <source src={require('../../assets/images/logo.webm')} />
+                    </video>
                 </Link>
     
                 <div className="sidebar-user-image">    
@@ -1198,8 +1362,8 @@ const AllDocuments = () => {
                 <div className="sidebar-panel">
                     <div className="sidebar-panel-item">
                         <button
-                            className={`sidebar-panel-item-btn history ${sidebarNode === 'history' ? 'active' : ''}`}
-                            onClick={handleChangeHistory}
+                            className={`sidebar-panel-item-btn history ${isHistoryActive ? 'active' : ''}`}
+                            onClick={handleHistoryButtonClick}
                         >
                             <img className="his1" src={require('../../assets/icons/history.png')} alt="" />
                             <img className="his2" src={require('../../assets/icons/history_view.png')} alt="" />
@@ -1217,24 +1381,8 @@ const AllDocuments = () => {
                 {sidebarNode === 'main' && (
                     <div className="sidebar-menu">
                         <ul>
-                            <ProjectTree projectId={projectId} onProjectSelect={handleProjectSelect} onHistoryUpdate={handleHistoryUpdate} />
+                            <ProjectTree projectId={projectId} onProjectSelect={handleProjectSelect} />
                         </ul>
-                    </div>
-                )}
-                {sidebarNode === 'history' && (
-                    <div className="sidebar-menu-history">
-                        {historyLists.length === 0 && (
-                            <div className="sidebar-menu-history-item none"><span style={{opacity: '.5'}}>История пуста</span></div>
-                        )}
-                        {historyLists.slice().reverse().map(item => (
-                            <div
-                                key={item.id}
-                                className={`sidebar-menu-history-item ${Number(selectedHistoryId) === Number(item.id) ? 'active' : ''}`}
-                                onClick={() => handleHistoryItemClick(item.id)}
-                            >
-                                <span>{item.name}</span>
-                            </div>
-                        ))}
                     </div>
                 )}
                 {sidebarNode === 'favorites' && (
@@ -1588,7 +1736,7 @@ const AllDocuments = () => {
                             {selectedColumns.map(key => (
                                 <th
                                     key={key}
-                                    className={['id', 'version', 'created', 'edited'].includes(key) ? 'cell-row-small styled-text' : 'styled-text'}
+                                    className={['id', 'version_ext', 'created', 'edited'].includes(key) ? 'cell-row-small styled-text' : 'styled-text'}
                                     style={{ width: columnWidths[key] }}
                                 >
                                     <div style={{ position: 'relative', userSelect: 'none' }}>
@@ -1596,12 +1744,13 @@ const AllDocuments = () => {
                                         {/* Ручка для изменения ширины */}
                                         <div
                                             onMouseDown={(e) => onMouseDownResize(e, key)}
+                                            onTouchStart={(e) => onTouchStartResize(e, key)}
                                             style={{
                                                 position: 'absolute',
                                                 right: '-13px',
                                                 top: 0,
                                                 height: '100%',
-                                                width: 5,
+                                                width: 15,
                                                 cursor: 'col-resize',
                                                 userSelect: 'none',
                                                 zIndex: 10,
@@ -1617,7 +1766,7 @@ const AllDocuments = () => {
                                 const isFavorite = favorites.some(fav =>
                                     fav.projectId === projectId &&
                                     fav.id_type === row.id_type &&
-                                    fav.id === row.id
+                                    fav.id === row.id_common
                                 );
 
                                 return (
@@ -1647,9 +1796,6 @@ const AllDocuments = () => {
                                             }}
                                             style={{ cursor: 'pointer', position: 'relative', width: 40 }}
                                         >
-                                            {/* {isFavorite && (
-                                                <img src={require('../../assets/icons/star_fav.png')} alt="Избранное" />
-                                            )} */}
                                             {isFavorite ? (
                                                 <img src={require('../../assets/icons/star_fav.png')} alt="Избранное" />
                                             ) : (
@@ -1663,13 +1809,14 @@ const AllDocuments = () => {
                                             )}
                                         </td>
                                         {selectedColumns.map(key => (
-                                        <td
-                                            key={key}
-                                            className={['id', 'version', 'created', 'edited'].includes(key) ? 'styled-text' : 'styled-text'}
-                                            style={{ width: columnWidths[key], overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
-                                        >
-                                            {columnRenderers[key] ? columnRenderers[key](row) : null}
-                                        </td>
+                                            <td
+                                                key={key}
+                                                className={['id', 'version_ext', 'created', 'edited'].includes(key) ? 'styled-text' : 'styled-text'}
+                                                style={{ width: columnWidths[key], overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                                            >
+                                                {/* {key === 'version_ext' && console.log(`Rendering version_ext for row ${row.id}: "${row.version_ext}"`)} */}
+                                                {columnRenderers[key] ? columnRenderers[key](row) : null}
+                                            </td>
                                         ))}
                                     </tr>
                                 );
@@ -1682,16 +1829,16 @@ const AllDocuments = () => {
                     <div className="main_content-panel-header">
                         <div className="main_content-panel-header-item">
                             <span
-                                className={`main_content-panel-header-item-title one ${panelIsActive && activeTab === 'one' ? 'active' : ''}`} 
-                                onClick={() => handleTabClick('one')}
-                            >
-                                {lang === 'ru' ? 'История' : 'History'}
-                            </span>
-                            <span
                                 className={`main_content-panel-header-item-title two ${panelIsActive && activeTab === 'two' ? 'active' : ''}`} 
                                 onClick={() => handleTabClick('two')}
                             >
                                 {lang === 'ru' ? 'Версии' : 'Versions'}
+                            </span>
+                            <span
+                                className={`main_content-panel-header-item-title one ${panelIsActive && activeTab === 'one' ? 'active' : ''}`} 
+                                onClick={() => handleTabClick('one')}
+                            >
+                                {lang === 'ru' ? 'История изменений' : 'History of changes'}
                             </span>
                             <span
                                 className={`main_content-panel-header-item-title three ${panelIsActive && activeTab === 'three' ? 'active' : ''}`} 
@@ -1708,7 +1855,43 @@ const AllDocuments = () => {
                         <div className="main_content-panel-header-item"></div>
                     </div>
 
-                    <div className={`main_content-panel-content ${activeTab === 'one' ? 'history' : ''}`}>
+                    <div className={`main_content-panel-content ${activeTab === 'two' ? 'history' : ''} ${activeTab === 'three' ? 'note' : ''}`}>
+                        <div className={`main_content-panel-content-item two ${activeTab === 'two' ? 'active' : ''}`}>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th className="main-panel-row styled-text">ID</th>
+                                        <th className="main-panel-row styled-text">Вер. внутр.</th>
+                                        <th className="main-panel-row styled-text">Вер. внеш.</th>
+                                        <th className="main-panel-row styled-text">Передан</th>
+                                        <th className="main-panel-row styled-text">Шифр</th>
+                                        <th className="main-panel-row styled-text">Название верхнее</th>
+                                        <th className="main-panel-row styled-text">Название нижнее</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {currentVersions.length === 0 ? (
+                                        <tr>
+                                            <td colSpan={7} className='main-panel-row styled-text' style={{textAlign: 'center'}}>
+                                                {lang === 'ru' ? 'Нет версий' : 'No versions'}
+                                            </td>
+                                        </tr>
+                                    ) : (
+                                        currentVersions.map(version => (
+                                            <tr key={version.id}>
+                                                <td className='main-panel-row styled-text'>{version.id}</td>
+                                                <td className='main-panel-row styled-text'>{version.version}</td>
+                                                <td className='main-panel-row styled-text'>{version.version_ext || '-'}</td>
+                                                <td className='main-panel-row styled-text'>{version.sentdate ? formatDate(version.sentdate) : '-'}</td>
+                                                <td className='main-panel-row styled-text'>{version.code}</td>
+                                                <td className='main-panel-row styled-text'>{version.nametop}</td>
+                                                <td className='main-panel-row styled-text'>{version.name}</td>
+                                            </tr>
+                                        ))
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
                         <div className={`main_content-panel-content-item one ${activeTab === 'one' ? 'active' : ''}`}>
                             <table>
                                 <thead>
@@ -1729,34 +1912,14 @@ const AllDocuments = () => {
                                 </tbody>
                             </table>
                         </div>
-                        <div className={`main_content-panel-content-item two ${activeTab === 'two' ? 'active' : ''}`}>
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th className="main-panel-row styled-text">ID</th>
-                                        <th className="main-panel-row styled-text">Вер. внутр.</th>
-                                        <th className="main-panel-row styled-text">Вер. внеш.</th>
-                                        <th className="main-panel-row styled-text">Передан</th>
-                                        <th className="main-panel-row styled-text">Шифр</th>
-                                        <th className="main-panel-row styled-text">Название верхнее</th>
-                                        <th className="main-panel-row styled-text">Название нижнее</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td className="main-panel-row styled-text">1</td>
-                                        <td className="main-panel-row styled-text">0</td>
-                                        <td className="main-panel-row styled-text">0</td>
-                                        <td className="main-panel-row styled-text">text</td>
-                                        <td className="main-panel-row styled-text">text</td>
-                                        <td className="main-panel-row styled-text" title="Наименование длинное наименование">Наименование длинное наименование</td>
-                                        <td className="main-panel-row styled-text" title="Наименование">Наименование</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
                         <div className={`main_content-panel-content-item three ${activeTab === 'three' ? 'active' : ''}`}>
-                            <span className="styled-text">Нет примечания</span>
+                            {/* <span className="styled-text">Нет примечания</span> */}
+                            <span className="styled-text">
+                                {/* {comments} */}
+                                {currentRow && currentRow.comments && currentRow.comments.trim() !== ''
+                                    ? currentRow.comments
+                                    : (lang === 'ru' ? 'Нет примечания' : 'No note')}
+                            </span>
                         </div>
                     </div>
                 </div>

@@ -39,17 +39,24 @@ const TreeNode = ({ node, isActive, onNodeClick, openNodes, activeNodeId, setAct
     const [isSelected, setIsSelected] = useState(false);
 
     const handleOneClick = (e) => {
-        document.querySelectorAll('.sidebar_menu-item-project').forEach(el => {
-            el.classList.remove('active');
-        });
+        // document.querySelectorAll('.sidebar_menu-item-project').forEach(el => {
+        //     el.classList.remove('active');
+        // });
         onNodeClick(node);
         setIsSelected(!isSelected);
         localStorage.setItem('selectTreeDocs', JSON.stringify(node.id));
+
+        
     };
 
     return (
         <li>
-            <div className={`${className} ${isSelected ? 'active' : ''}`} onClick={handleOneClick} data-node-id={node.id}>
+            <div
+                // className={`${className} ${isSelected ? 'active' : ''}`}
+                className={`${className} ${activeNodeId === node.id ? 'active' : ''}`}
+                onClick={handleOneClick}
+                data-node-id={node.id}
+            >
                 {hasChildren && (
                     <div className='sidebar_menu-item-project-div-image'>
                         <img
@@ -103,11 +110,20 @@ const ProjectTree = ({ onProjectSelect, onHistoryUpdate  }) => {
                 const data = await getTypeTree(token, projectId);
                 if (data) {
                     setTreeData(data);
-                    if (data.length > 0) {
+                    // if (data.length > 0) {
+                    //     setOpenNodes(prevState => ({
+                    //         ...prevState,
+                    //         [data[0].id]: true // Открываем первый узел
+                    //     }));
+                    // }
+                    if (data && data.length > 0) {
+                        setTreeData(data);
                         setOpenNodes(prevState => ({
                             ...prevState,
                             [data[0].id]: true // Открываем первый узел
                         }));
+                        setActiveNodeId(data[0].id); // Устанавливаем активность на первый узел (главную ветку)
+                        localStorage.setItem('selectTreeDocs', JSON.stringify(data[0].id));
                     }
                 } else {
                     setError('Failed to load data.');

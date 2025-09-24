@@ -17,7 +17,7 @@ const defaultSettings = {
     panelVisible: 'visible',
     borderTable: 'false',
     bgRow: 'false',
-    columsTable: ['id', 'code', 'version', 'nameTop', 'nameBottom', 'created', 'whomCreated', 'edited', 'whomEdited'],
+    columsTable: ['id', 'code', 'version_ext', 'nameTop', 'nameBottom', 'created', 'whomCreated', 'edited', 'whomEdited'],
     escClose: 'true'
 };
 
@@ -25,6 +25,7 @@ const allColumns = [
     { key: 'id', labelRu: 'ID', labelEn: 'ID' },
     { key: 'code', labelRu: 'Шифр', labelEn: 'Code' },
     { key: 'version', labelRu: 'Вер. внутр.', labelEn: 'Internal version' },
+    { key: 'version_ext', labelRu: 'Вер. внеш.', labelEn: 'External version' },
     { key: 'nameTop', labelRu: 'Название верхнее', labelEn: 'Upper name' },
     { key: 'nameBottom', labelRu: 'Название нижнее', labelEn: 'Lower name' },
     { key: 'created', labelRu: 'Создан', labelEn: 'Created' },
@@ -76,6 +77,16 @@ const applySettings = (settings) => {
     const styledSubtextElements = document.querySelectorAll('.styled-subtext');
     styledSubtextElements.forEach(elementSubtext => {
         elementSubtext.style.fontSize = (settings.fontSize * 0.9) + 'px';
+    });
+    const styleImageDivElements = document.querySelectorAll('.setting-item-card-title-image');
+    const styleImageElements = document.querySelectorAll('.setting-item-card-title-image img');
+    styleImageDivElements.forEach(elementImageDiv => {
+        elementImageDiv.style.width = (settings.fontSize * 0.9) + 'px';
+        elementImageDiv.style.height = (settings.fontSize * 0.9) + 'px';
+    });
+    styleImageElements.forEach(elementImage => {
+        elementImage.style.width = 'auto';
+        elementImage.style.height = (settings.fontSize * 0.9) + 'px';
     });
 
     document.getElementById('theme-app').value = settings.theme;
@@ -388,6 +399,54 @@ const Settings = () => {
         };
         fetchProjects();
     }, [token, lang]);
+
+    const [modalEditPassword, setModalEditPassword] = useState(false);
+    const handleOpenModalEditPassword = () => {
+        setModalEditPassword(!modalEditPassword);
+    };
+    const handleCloseModalEditPassword = () => {
+        setModalEditPassword(false);
+    };
+    const [passwordVisible1, setPasswordVisible1] = useState(false);
+    const [activeIconPassword1, setActiveIconPassword1] = useState(false);
+    const [passwordVisible2, setPasswordVisible2] = useState(false);
+    const [activeIconPassword2, setActiveIconPassword2] = useState(false);
+    const [passwordVisible3, setPasswordVisible3] = useState(false);
+    const [activeIconPassword3, setActiveIconPassword3] = useState(false);
+    const togglePasswordVisibility1 = () => {
+        setPasswordVisible1(!passwordVisible1);
+    };
+    const togglePasswordVisibility2 = () => {
+        setPasswordVisible2(!passwordVisible2);
+    };
+    const togglePasswordVisibility3 = () => {
+        setPasswordVisible3(!passwordVisible3);
+    };
+    const handleFocus1 = () => {
+        setActiveIconPassword1(true);
+    };
+    const handleBlur1 = () => {
+        setActiveIconPassword1(false);
+    };
+    const handleFocus2 = () => {
+        setActiveIconPassword2(true);
+    };
+    const handleBlur2 = () => {
+        setActiveIconPassword2(false);
+    };
+    const handleFocus3 = () => {
+        setActiveIconPassword3(true);
+    };
+    const handleBlur3 = () => {
+        setActiveIconPassword3(false);
+    };
+
+    const videoLogoRef = useRef(null);
+    useEffect(() => {
+        if (videoLogoRef.current) {
+            videoLogoRef.current.playbackRate = 3.0;
+        }
+    }, []);
     
 
     return (
@@ -406,18 +465,9 @@ const Settings = () => {
                 </Link>
                 
                 <Link to="/home" className='sidebar-logo'>
-                    <div className="sidebar-logo-image">
-                        <div className="sidebar-logo-image-item">
-                            <div className="sidebar-logo-image-item-nosquare"></div>
-                        </div>
-                        <div className="sidebar-logo-image-item">
-                            <div className="sidebar-logo-image-item-line"></div>
-                        </div>
-                        <div className="sidebar-logo-image-item">
-                            <div className="sidebar-logo-image-item-square"></div>
-                        </div>
-                    </div>
-                    <div className="sidebar-logo-text">DMT<br />Base</div>
+                    <video autoPlay muted className='video-logo' ref={videoLogoRef}>
+                        <source src={require('../../assets/images/logo.webm')} />
+                    </video>
                 </Link>
             
                 <div className="sidebar_settings-title">
@@ -1047,32 +1097,6 @@ const Settings = () => {
                         <div className="settings_container-content-item-title styled-title">
                             {lang === 'ru' ? 'Видимость полей' : 'Field visibility'}
                         </div>
-                        {/* <div className="table-cols">
-                            <div className="table-cols-title styled-text">
-                                {lang === 'ru' ? 'Включить поля:' : 'Enable fields:'}
-                            </div>
-                            <div className="table-cols-items" id="available-fields">
-                                <div className="table-cols-item styled-text"><span>ID</span></div>
-                                <div className="table-cols-item styled-text"><span>Шифр</span></div>
-                                <div className="table-cols-item styled-text"><span>Вер. внутр.</span></div>
-                                <div className="table-cols-item styled-text"><span>Название верхнее</span></div>
-                                <div className="table-cols-item styled-text"><span>Название нижнее</span></div>
-                                <div className="table-cols-item styled-text"><span>Создан</span></div>
-                                <div className="table-cols-item styled-text"><span>Кем создан</span></div>
-                                <div className="table-cols-item styled-text"><span>Редактирован</span></div>
-                                <div className="table-cols-item styled-text"><span>Кем редактирован</span></div>
-                                <div className="table-cols-item styled-text"><span>Лист</span></div>
-                                <div className="table-cols-item styled-text"><span>Размер</span></div>
-                                <div className="table-cols-item styled-text"><span>Статус</span></div>
-                            </div>
-                        </div>
-                        <div className="table-cols">
-                            <div className="table-cols-title styled-text">
-                                {lang === 'ru' ? 'Порядок полей:' : 'Field order:'}
-                            </div>
-                            <div className="table-cols-items grab" id="selected-fields">
-                            </div>
-                        </div> */}
                         <div className="table-cols">
                             <div className="table-cols-title styled-text">
                                 {lang === 'ru' ? 'Включить поля:' : 'Enable fields:'}
@@ -1138,7 +1162,7 @@ const Settings = () => {
                                     </span>
                                 </div>
                                 <div className="setting-item-card-text">
-                                    <button id='btn-select-font' className="styled-text">
+                                    <button id='btn-select-font' className="styled-text" onClick={handleOpenModalEditPassword}>
                                         {lang === 'ru' ? 'Изменить' : 'Change'}
                                     </button>
                                 </div>
@@ -1150,9 +1174,80 @@ const Settings = () => {
                     </div>
                 </div>
 
-                <div className="modal-security">
-                    <div className="modal-security-content"></div>
-                </div>
+                {modalEditPassword && (
+                    <div className="modal-security">
+                        <div className="modal-security-content">
+                            <div className="modal-security-title styled-text">{lang === 'ru' ? 'Изменить пароль' : 'Edit password'}</div>
+                            <form className="modal-security-form">
+                                <div className="modal-security-form-inputs">
+                                    <input type="password" autoComplete="new-password" className='styled-text' hidden />
+                                    <div className="modal-security-form-input">
+                                        <input
+                                            type={passwordVisible1 ? 'text' : 'password'}
+                                            className='styled-text'
+                                            placeholder={lang === 'ru' ? 'Старый пароль' : 'Old password'}
+                                            onFocus={handleFocus1}
+                                            onBlur={handleBlur1}
+                                        />
+                                        <span
+                                            className={`modal-security-form-input-icon ${activeIconPassword1 ? 'active' : ''}`}
+                                            onClick={togglePasswordVisibility1}
+                                        >
+                                            {passwordVisible1 ? (
+                                                <img src={require('../../assets/icons/eye2.png')} alt="Скрыть пароль" />
+                                            ) : (
+                                                <img src={require('../../assets/icons/eye1.png')} alt="Показать пароль" />
+                                            )}
+                                        </span>
+                                    </div>
+                                    <div className="modal-security-form-input">
+                                        <input
+                                            type={passwordVisible2 ? 'text' : 'password'}
+                                            className='styled-text'
+                                            placeholder={lang === 'ru' ? 'Новый пароль' : 'New password'}
+                                            onFocus={handleFocus2}
+                                            onBlur={handleBlur2}
+                                        />
+                                        <span
+                                            className={`modal-security-form-input-icon ${activeIconPassword2 ? 'active' : ''}`}
+                                            onClick={togglePasswordVisibility2}
+                                        >
+                                            {passwordVisible2 ? (
+                                                <img src={require('../../assets/icons/eye2.png')} alt="Скрыть пароль" />
+                                            ) : (
+                                                <img src={require('../../assets/icons/eye1.png')} alt="Показать пароль" />
+                                            )}
+                                        </span>
+                                    </div>
+                                    <div className="modal-security-form-input">
+                                        <input
+                                            type={passwordVisible3 ? 'text' : 'password'}
+                                            className='styled-text'
+                                            placeholder={lang === 'ru' ? 'Подтвердите новый пароль' : 'New password'}
+                                            onFocus={handleFocus3}
+                                            onBlur={handleBlur3}
+                                        />
+                                        <span
+                                            className={`modal-security-form-input-icon ${activeIconPassword3 ? 'active' : ''}`}
+                                            onClick={togglePasswordVisibility3}
+                                        >
+                                            {passwordVisible3 ? (
+                                                <img src={require('../../assets/icons/eye2.png')} alt="Скрыть пароль" />
+                                            ) : (
+                                                <img src={require('../../assets/icons/eye1.png')} alt="Показать пароль" />
+                                            )}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="modal-security-form-btns">
+                                    <button className="modal-security-form-btn styled-text" onClick={handleCloseModalEditPassword}>{lang === 'ru' ? 'Отмена': 'Cancel'}</button>
+                                    <button className="modal-security-form-btn edit styled-text">{lang === 'ru' ? 'Изменить': 'Edit'}</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                )}
+
 
                 <div
                     className={`settings_container-content support ${activeSection === 'support' ? 'active' : ''}`}

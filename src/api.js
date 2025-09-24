@@ -148,3 +148,22 @@ export const getDocuments = async (token, projectId) => {
         throw error; // Rethrow the error for further handling
     }
 };
+export const getDocumentVersions = async (token, documentId) => {
+  try {
+    const response = await fetch(`${apiUrl}/documents/${documentId}/version/`, {
+      method: 'GET',
+      headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+      }
+    });
+    if (!response.ok) {
+      throw new Error(`Error fetching versions: ${response.statusText}`);
+    }
+    const data = await response.json();
+    return data; // массив версий для документа
+  } catch (error) {
+    console.error('Failed to fetch document versions:', error);
+    return [];
+  }
+};

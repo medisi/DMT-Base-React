@@ -17,15 +17,15 @@
 }
 @media (hover :hover) {
     .main.orange #button-login:hover {
-        background-color: #FF4F0050;
-        border: 1px solid #FF4F0010;
+        background-color: transparent;
+        border: 1px solid #FF4F00;
         color: hsl(0, 0%, 0%);
     }
 }
 @media (hover :none) {
     .main.orange #button-login:active {
-        background-color: #FF4F0050;
-        border: 1px solid #FF4F0010;
+        background-color: transparent;
+        border: 1px solid #FF4F00;
         color: hsl(0, 0%, 0%);
     }
 }
@@ -55,6 +55,22 @@
 .main.orange tr.bg_row
 {
     background-color: #FF4F0040;
+}
+.main.orange .modal-security-form-btn {
+    border: 1px solid #FF4F00;
+}
+.main.orange .modal-security-form-btn.edit {
+    background-color: #FF4F00;
+}
+@media (hover :hover) {
+    .main.orange .modal-security-form-btn.edit:hover {
+        box-shadow: 0 0 7px #FF4F00;
+    }
+}
+@media (hover :active) {
+    .main.orange .modal-security-form-btn.edit:active {
+        box-shadow: 0 0 7px #FF4F00;
+    }
 }
 
 /* BLUE COLOR SCHEME */
@@ -114,6 +130,22 @@
 {
     background-color: #7EBBF040;
 }
+.main.blue .modal-security-form-btn {
+    border: 1px solid #7EBBF0;
+}
+.main.blue .modal-security-form-btn.edit {
+    background-color: #7EBBF0;
+}
+@media (hover :hover) {
+    .main.blue .modal-security-form-btn.edit:hover {
+        box-shadow: 0 0 7px #7EBBF0;
+    }
+}
+@media (hover :active) {
+    .main.blue .modal-security-form-btn.edit:active {
+        box-shadow: 0 0 7px #7EBBF0;
+    }
+}
 
 /* GRAY COLOR SCHEME */
 .main.gray .sidebar_menu-item-project:hover,
@@ -172,6 +204,22 @@
 {
     background-color: #91919140;
 }
+.main.gray .modal-security-form-btn {
+    border: 1px solid #919191;
+}
+.main.gray .modal-security-form-btn.edit {
+    background-color: #919191;
+}
+@media (hover :hover) {
+    .main.gray .modal-security-form-btn.edit:hover {
+        box-shadow: 0 0 7px #919191;
+    }
+}
+@media (hover :active) {
+    .main.gray .modal-security-form-btn.edit:active {
+        box-shadow: 0 0 7px #919191;
+    }
+}
 
 /* GREEN COLOR SCHEME */
 .main.green .sidebar_menu-item-project:hover,
@@ -229,4 +277,20 @@
 .main.green tr.bg_row
 {
     background-color: #4ad44a40;
+}
+.main.green .modal-security-form-btn {
+    border: 1px solid #4ad44a;
+}
+.main.green .modal-security-form-btn.edit {
+    background-color: #4ad44a;
+}
+@media (hover :hover) {
+    .main.green .modal-security-form-btn.edit:hover {
+        box-shadow: 0 0 7px #4ad44a;
+    }
+}
+@media (hover :active) {
+    .main.green .modal-security-form-btn.edit:active {
+        box-shadow: 0 0 7px #4ad44a;
+    }
 }

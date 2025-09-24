@@ -41,6 +41,8 @@ const OpenDocument = () => {
     const [showError, setShowError] = useState(false);
     const navigate = useNavigate();
     const [fileUrl, setFileUrl] = useState(null);
+    const [filename, setFilename] = useState('file');
+    const [fileType, setFileType] = useState(null);
     const [loadingFile, setLoadingFile] = useState(false);
     const [errorFile, setErrorFile] = useState(null);
     const [passwordVisible, setPasswordVisible] = useState(false);
@@ -136,7 +138,37 @@ const OpenDocument = () => {
     const onDocumentLoadSuccess = ({ numPages }) => {
         setNumPages(numPages);
     };
-    const [fileType, setFileType] = useState(null);
+    // useEffect(() => {
+    //     if (!documentId || !token) return;
+    //     const fetchDocumentFile = async () => {
+    //         setLoadingFile(true);
+    //         setErrorFile(null);
+    //         try {
+    //             const response = await fetch(`${apiUrl}/documents/${documentId}/file/`, {
+    //                 headers: {
+    //                     Authorization: `Bearer ${token}`,
+    //                 },
+    //             });
+    //             if (!response.ok) {
+    //                 throw new Error(`Ошибка загрузки документа: ${response.statusText}`);
+    //             }
+    //             const blob = await response.blob();
+    //             setFileType(blob.type); // сохраняем MIME тип
+    //             const url = URL.createObjectURL(blob);
+    //             setFileUrl(url);
+    //         } catch (err) {
+    //             setErrorFile(err.message);
+    //         } finally {
+    //             setLoadingFile(false);
+    //         }
+    //     };
+    //     fetchDocumentFile();
+    //     return () => {
+    //         if (fileUrl) {
+    //             URL.revokeObjectURL(fileUrl);
+    //         }
+    //     };
+    // }, [documentId, token]);
     useEffect(() => {
         if (!documentId || !token) return;
         const fetchDocumentFile = async () => {
@@ -148,13 +180,32 @@ const OpenDocument = () => {
                         Authorization: `Bearer ${token}`,
                     },
                 });
+                console.log('response: ', response);
                 if (!response.ok) {
                     throw new Error(`Ошибка загрузки документа: ${response.statusText}`);
                 }
+                // const contentDisposition = response.headers.get('Content-Disposition') || response.headers.get('content-disposition');
+                const contentDisposition = response.headers.get('Content-Disposition') || response.headers.get('content-disposition');
+                console.log(contentDisposition); // null
+                let filename = 'file';
+                if (contentDisposition) {
+                    // const filenameMatch = contentDisposition.match(/filename\*?=(?:UTF-8'')?["']?([^"';]+)["']?/i);
+                    // if (filenameMatch && filenameMatch[1]) {
+                    //     filename = decodeURIComponent(filenameMatch[1]);
+                    // }
+                    const filenameStarMatch = contentDisposition.match(/filename\*=UTF-8''([^;\r\n]+)/i);
+  const filenameMatch = contentDisposition.match(/filename="([^"]+)"/i);
+  if (filenameStarMatch && filenameStarMatch[1]) {
+    filename = decodeURIComponent(filenameStarMatch[1]);
+  } else if (filenameMatch && filenameMatch[1]) {
+    filename = filenameMatch[1];
+  }
+                }
                 const blob = await response.blob();
-                setFileType(blob.type); // сохраняем MIME тип
+                setFileType(blob.type);
                 const url = URL.createObjectURL(blob);
                 setFileUrl(url);
+                setFilename(filename);
             } catch (err) {
                 setErrorFile(err.message);
             } finally {
@@ -168,6 +219,8 @@ const OpenDocument = () => {
             }
         };
     }, [documentId, token]);
+
+    const fileExtension = filename.split('.').pop().toLowerCase();
 
     return (
         <div className="open_doc-container">
@@ -199,6 +252,34 @@ const OpenDocument = () => {
                         src={fileUrl}
                         title='document'
                     />
+            //         <>
+            //             {fileExtension === 'pdf' ? (
+            //                 <iframe
+            //                     src={fileUrl}
+            //                     title='document'
+            //                 />
+            //             ) : (
+            //                 <div style={{ padding: '20px', textAlign: 'center' }}>
+            //     <p>Файл: <strong>{filename}</strong></p>
+            //     <a
+            //       href={fileUrl}
+            //       download={filename}
+            //       style={{
+            //         display: 'inline-block',
+            //         marginTop: '10px',
+            //         padding: '10px 20px',
+            //         backgroundColor: '#FF4F00',
+            //         color: 'white',
+            //         borderRadius: '5px',
+            //         textDecoration: 'none',
+            //         cursor: 'pointer',
+            //       }}
+            //     >
+            //       Скачать файл
+            //     </a>
+            //   </div>
+            //             )}
+            //         </>
                 )}
             </div>
         </div>

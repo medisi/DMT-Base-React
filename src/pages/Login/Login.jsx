@@ -46,8 +46,8 @@ const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    const [showError, setShowError] = useState(false); // Состояние для отображения ошибки
-    const navigate = useNavigate(); // Получите объект navigate
+    const [showError, setShowError] = useState(false);
+    const navigate = useNavigate();
 
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [activeIconPassword, setActiveIconPassword] = useState(false);
@@ -82,23 +82,21 @@ const Login = () => {
         }
     };
 
+    const videoLogoRef = useRef(null);
+    useEffect(() => {
+        if (videoLogoRef.current) {
+            videoLogoRef.current.playbackRate = 3.0;
+        }
+    }, []);
+
 
     return (
             <div className="login-container" settings={settings} setSettings={setSettings}>
                 <div className="login-header">
                     <div className='login-logo'>
-                        <div className="login-logo-image">
-                            <div className="login-logo-image-item">
-                                <div className="login-logo-image-item-nosquare"></div>
-                            </div>
-                            <div className="login-logo-image-item">
-                                <div className="login-logo-image-item-line"></div>
-                            </div>
-                            <div className="login-logo-image-item">
-                                <div className="login-logo-image-item-square"></div>
-                            </div>
-                        </div>
-                        <div className="login-logo-text">DMT<br />Base</div>
+                        <video autoPlay muted className='video-logo' ref={videoLogoRef}>
+                            <source src={require('../../assets/images/logo.webm')} />
+                        </video>
                     </div>
 
                     <NameDatabase />
@@ -154,18 +152,18 @@ const Login = () => {
                         >
                             {lang === 'ru' ? 'Войти' : 'Login'}
                         </button>
-                        {showError && (
-                            <div className={`error-modal active`}>
-                                <div className="error-modal-content">
-                                    <div className="error-modal-title styled-text">
-                                        {lang === 'ru' ? 'Ошибка входа' : 'Login error'}
-                                    </div>
-                                    <div className="error-modal-text styled-text">{error}</div>
-                                </div>
-                            </div>
-                        )}
                     </form>
                 </div>
+                {showError && (
+                    <div className={`error-modal`}>
+                        <div className="error-modal-content">
+                            <div className="error-modal-title styled-text">
+                                {lang === 'ru' ? 'Ошибка входа' : 'Login error'}
+                            </div>
+                            <div className="error-modal-text styled-text">{error}</div>
+                        </div>
+                    </div>
+                )}
             </div>
     );
 };

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './Home.css';
 import { Link, useNavigate } from 'react-router';
 import ProjectTreeHome from '../../components/ProjectTreeHome/ProjectTreeHome';
@@ -91,13 +91,54 @@ const Home = () => {
             }
         }
     };
-   
+
+    const videoLogoRef = useRef(null);
+    useEffect(() => {
+        if (videoLogoRef.current) {
+            videoLogoRef.current.playbackRate = 2.0;
+        }
+    }, []);
+
+    // Refs для сайдбара и resize-handle
+    const sidebarRef = useRef(null);
+    const resizeHandleRef = useRef(null);
+    
+    // Функции для обработки ресайза
+    const handleMouseDown = (e) => {
+        e.preventDefault();
+        document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseup', handleMouseUp);
+    };
+    const handleMouseMove = (e) => {
+        if (sidebarRef.current && !isSidebarHidden) {
+            const rect = sidebarRef.current.getBoundingClientRect();
+            const newWidth = e.clientX - rect.left;
+            // Ограничиваем ширину между min (200px) и max (400px)
+            const clampedWidth = Math.max(200, Math.min(400, newWidth));
+            sidebarRef.current.style.width = clampedWidth + 'px';
+        }
+    };
+    const handleMouseUp = () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+    };
+    // Добавляем обработчики событий для resize-handle
+    useEffect(() => {
+        const handle = resizeHandleRef.current;
+        if (handle) {
+            handle.addEventListener('mousedown', handleMouseDown);
+            return () => {
+                handle.removeEventListener('mousedown', handleMouseDown);
+            };
+        }
+    }, [isSidebarHidden]); // Перерегистрируем при изменении видимости сайдбара
     
 
     return (
         <>
-            <div className={`sidebar ${isSidebarHidden ? 'hidden' : ''}`}>
-                <div className="resize-handle"></div>
+            <div className={`sidebar ${isSidebarHidden ? 'hidden' : ''}`} ref={sidebarRef} style={{ width: isSidebarHidden ? '0px' : undefined }}>
+                <div className="resize-handle" ref={resizeHandleRef}></div>
+
                 <button
                     id="hidden-sidebar"
                     onClick={toggleSidebar}
@@ -110,18 +151,10 @@ const Home = () => {
                 </Link>
 
                 <Link to="/home" className='sidebar-logo'>
-                    <div className="sidebar-logo-image">
-                        <div className="sidebar-logo-image-item">
-                            <div className="sidebar-logo-image-item-nosquare"></div>
-                        </div>
-                        <div className="sidebar-logo-image-item">
-                            <div className="sidebar-logo-image-item-line"></div>
-                        </div>
-                        <div className="sidebar-logo-image-item">
-                            <div className="sidebar-logo-image-item-square"></div>
-                        </div>
-                    </div>
-                    <div className="sidebar-logo-text">DMT<br />Base</div>
+                    <video autoPlay muted className='video-logo' ref={videoLogoRef}>
+                        <source src={require('../../assets/images/logo.webm')} />
+                    </video>
+
                 </Link>
                 <div className="sidebar-user-image">    
                     <img src={require('../../assets/images/user.png')} alt="" />
