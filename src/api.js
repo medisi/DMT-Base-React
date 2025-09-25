@@ -148,6 +148,7 @@ export const getDocuments = async (token, projectId) => {
         throw error; // Rethrow the error for further handling
     }
 };
+
 export const getDocumentVersions = async (token, documentId) => {
   try {
     const response = await fetch(`${apiUrl}/documents/${documentId}/version/`, {
@@ -164,6 +165,26 @@ export const getDocumentVersions = async (token, documentId) => {
     return data; // массив версий для документа
   } catch (error) {
     console.error('Failed to fetch document versions:', error);
+    return [];
+  }
+};
+
+export const getDocumentHistory = async (token, documentId) => {
+  try {
+    const response = await fetch(`${apiUrl}/documents/${documentId}/history/`, {
+      method: 'GET',
+      headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+      }
+    });
+    if (!response.ok) {
+      throw new Error(`Error fetching versions: ${response.statusText}`);
+    }
+    const data = await response.json();
+    return data; // массив версий для документа
+  } catch (error) {
+    console.error('Failed to fetch document history:', error);
     return [];
   }
 };

@@ -3,7 +3,7 @@ import './AllDocuments.css';
 import { Link, useHref, useNavigate, useParams } from 'react-router-dom';
 import ProjectTree from '../../components/ProjectTree/ProjectTree';
 import NameDatabase from '../../components/NameDatabase/NameDatabase';
-import { getDocuments, getDocumentVersions } from '../../api';
+import { getDocumentHistory, getDocuments, getDocumentVersions } from '../../api';
 import { useAuth } from '../../AuthContext';
 import NameUser from '../../components/NameUser/NameUser';
 import FavoritesTree from '../../components/FavoritesTree/FavoritesTree';
@@ -675,6 +675,7 @@ const AllDocuments = () => {
     };
 
     const [currentVersions, setCurrentVersions] = useState([]);
+    const [currentHistory, setCurrentHistory] = useState([]);
 
     const handleRowSelect = async (id, e) => {
         e.stopPropagation();
@@ -686,47 +687,83 @@ const AllDocuments = () => {
         setCurrentRow(selectedRow);
 
         if (selectedRow) {
-        // Все документы с таким же id_common из allRows
-        const relatedDocs = allRows.filter(row => row.id_common === selectedRow.id_common);
-        // Получаем версии из API для каждого документа
-        const versionsArrays = await Promise.all(
-            relatedDocs.map(doc => getDocumentVersions(token, doc.id))
-        );
-        // Объединяем версии из API в один массив
-        const apiVersions = versionsArrays.flat();
-        // Объединяем документы из allRows и версии из API
-        // Чтобы не было дубликатов, создаём Map по id
-        const combinedMap = new Map();
-        // Добавляем документы из allRows (текущие версии)
-        relatedDocs.forEach(doc => {
-            combinedMap.set(doc.id, {
-                id: doc.id,
-                version: doc.version,
-                version_ext: doc.version_ext || '-',
-                sentdate: doc.sentdate || null,
-                code: doc.code,
-                nametop: doc.nameTop,
-                name: doc.nameBottom,
+            // Все документы с таким же id_common из allRows
+            const relatedDocs = allRows.filter(row => row.id_common === selectedRow.id_common);
+            // Получаем версии из API для каждого документа
+            const versionsArrays = await Promise.all(
+                relatedDocs.map(doc => getDocumentVersions(token, doc.id))
+            );
+            // Объединяем версии из API в один массив
+            const apiVersions = versionsArrays.flat();
+            // Объединяем документы из allRows и версии из API
+            // Чтобы не было дубликатов, создаём Map по id
+            const combinedMap = new Map();
+            // Добавляем документы из allRows (текущие версии)
+            relatedDocs.forEach(doc => {
+                combinedMap.set(doc.id, {
+                    id: doc.id,
+                    version: doc.version,
+                    version_ext: doc.version_ext || '-',
+                    sentdate: doc.sentdate || null,
+                    code: doc.code,
+                    nametop: doc.nameTop,
+                    name: doc.nameBottom,
+                });
             });
-        });
-        // Добавляем версии из API (перезапишут, если совпадут id)
-        apiVersions.forEach(ver => {
-            combinedMap.set(ver.id, {
-                id: ver.id,
-                version: ver.version,
-                version_ext: ver.version_ext || '-',
-                sentdate: ver.sentdate || null,
-                code: ver.code,
-                nametop: ver.nametop,
-                name: ver.name,
+            // Добавляем версии из API (перезапишут, если совпадут id)
+            apiVersions.forEach(ver => {
+                combinedMap.set(ver.id, {
+                    id: ver.id,
+                    version: ver.version,
+                    version_ext: ver.version_ext || '-',
+                    sentdate: ver.sentdate || null,
+                    code: ver.code,
+                    nametop: ver.nametop,
+                    name: ver.name,
+                });
             });
-        });
-        // Преобразуем Map обратно в массив
-        const combinedVersions = Array.from(combinedMap.values());
-        setCurrentVersions(combinedVersions);
-    } else {
-        setCurrentVersions([]);
-    }
+            // Преобразуем Map обратно в массив
+            const combinedVersions = Array.from(combinedMap.values());
+            setCurrentVersions(combinedVersions);
+        } else {
+            setCurrentVersions([]);
+        }
+        if (selectedRow) {
+            // Все документы с таким же id_common из allRows
+            const relatedDocs = allRows.filter(row => row.id === selectedRow.id);
+            // Получаем версии из API для каждого документа
+            const historyArrays = await Promise.all(
+                relatedDocs.map(doc => getDocumentHistory(token, doc.id))
+            );
+            // Объединяем версии из API в один массив
+            const apiHistory = historyArrays.flat();
+            // Объединяем документы из allRows и версии из API
+            // Чтобы не было дубликатов, создаём Map по id
+            const combinedMap = new Map();
+            // Добавляем документы из allRows (текущие версии)
+            // relatedDocs.forEach(doc => {
+            //     combinedMap.set(doc.id, {
+            //         id: doc.id,
+            //         when: doc.when,
+            //         filesize: doc.filesize,
+            //         extension: doc.extension,
+            //     });
+            // });
+            // Добавляем версии из API (перезапишут, если совпадут id)
+            apiHistory.forEach(his => {
+                combinedMap.set(his.id, {
+                    id: his.id,
+                    when: his.when,
+                    filesize: his.filesize,
+                    extension: his.extension,
+                });
+            });
+            // Преобразуем Map обратно в массив
+            const combinedHistory = Array.from(combinedMap.values());
+            setCurrentHistory(combinedHistory);
+        } else {
+            setCurrentHistory([]);
+        }
 
         if (e.button === 0) { // Левый клик
             if (ctrlPressed.current) {
@@ -1918,12 +1955,22 @@ const AllDocuments = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td className="main-panel-row styled-subtext">3</td>
-                                        <td className="main-panel-row styled-subtext">date</td>
-                                        <td className="main-panel-row styled-subtext">text</td>
-                                        <td className="main-panel-row styled-subtext">text</td>
-                                    </tr>
+                                    {currentHistory.length === 0 ? (
+                                        <tr>
+                                            <td colSpan={7} className='main-panel-row styled-text' style={{textAlign: 'center'}}>
+                                                {lang === 'ru' ? 'Нет истории изменений' : 'No history'}
+                                            </td>
+                                        </tr>
+                                    ) : (
+                                        currentHistory.map(history => (
+                                            <tr key={history.id}>
+                                                <td className='main-panel-row styled-text'>{history.id}</td>
+                                                <td className='main-panel-row styled-text'>{history.when ? formatDate(history.when) : '-'}</td>
+                                                <td className='main-panel-row styled-text'>{history.filesize}</td>
+                                                <td className='main-panel-row styled-text'>{history.extension}</td>
+                                            </tr>
+                                        ))
+                                    )}
                                 </tbody>
                             </table>
                         </div>
