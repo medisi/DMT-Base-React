@@ -233,6 +233,14 @@ const AllDocuments = () => {
         const date = new Date(dateString);
         return `${String(date.getDate()).padStart(2, '0')}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
     };
+    const formatFileSize = (bytes) => {
+        if (!bytes || bytes === 0) return '0 Б';
+        const k = 1024;
+        const sizes = ['Б', 'Кб', 'Мб', 'Гб'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        const formatted = parseFloat((bytes / Math.pow(k, i)).toFixed(2));
+        return `${formatted} ${sizes[i]}`;
+    };
 
     // работа со списками
     const [lists, setLists] = useState([]);
@@ -699,22 +707,22 @@ const AllDocuments = () => {
             // Чтобы не было дубликатов, создаём Map по id
             const combinedMap = new Map();
             // Добавляем документы из allRows (текущие версии)
-            relatedDocs.forEach(doc => {
-                combinedMap.set(doc.id, {
-                    id: doc.id,
-                    version: doc.version,
-                    version_ext: doc.version_ext || '-',
-                    sentdate: doc.sentdate || null,
-                    code: doc.code,
-                    nametop: doc.nameTop,
-                    name: doc.nameBottom,
-                });
-            });
+            // relatedDocs.forEach(doc => {
+            //     combinedMap.set(doc.id, {
+            //         id: doc.id,
+            //         version: doc.version,
+            //         version_ext: doc.version_ext || '-',
+            //         sentdate: doc.sentdate || null,
+            //         code: doc.code,
+            //         nametop: doc.nameTop,
+            //         name: doc.nameBottom,
+            //     });
+            // });
             // Добавляем версии из API (перезапишут, если совпадут id)
             apiVersions.forEach(ver => {
                 combinedMap.set(ver.id, {
                     id: ver.id,
-                    version: ver.version,
+                    version: ver.version || '-',
                     version_ext: ver.version_ext || '-',
                     sentdate: ver.sentdate || null,
                     code: ver.code,
@@ -741,20 +749,12 @@ const AllDocuments = () => {
             // Чтобы не было дубликатов, создаём Map по id
             const combinedMap = new Map();
             // Добавляем документы из allRows (текущие версии)
-            // relatedDocs.forEach(doc => {
-            //     combinedMap.set(doc.id, {
-            //         id: doc.id,
-            //         when: doc.when,
-            //         filesize: doc.filesize,
-            //         extension: doc.extension,
-            //     });
-            // });
             // Добавляем версии из API (перезапишут, если совпадут id)
             apiHistory.forEach(his => {
                 combinedMap.set(his.id, {
-                    id: his.id,
+                    id: his.version,
                     when: his.when,
-                    filesize: his.filesize,
+                    filesize: formatFileSize(his.datalength),
                     extension: his.extension,
                 });
             });

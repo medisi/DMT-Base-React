@@ -151,7 +151,7 @@ export const getDocuments = async (token, projectId) => {
 
 export const getDocumentVersions = async (token, documentId) => {
   try {
-    const response = await fetch(`${apiUrl}/documents/${documentId}/version/`, {
+    const response = await fetch(`${apiUrl}/documents/${documentId}/versions/`, {
       method: 'GET',
       headers: {
           'Content-Type': 'application/json',
