@@ -471,6 +471,8 @@ const AllDocuments = () => {
         // Иначе очищаем
         setSelectedRows([]);
         setSelectedRowId(null);
+        setCurrentVersions([]);
+        setCurrentHistory([]);
         localStorage.setItem('selectRow', JSON.stringify(''));
     };
 
