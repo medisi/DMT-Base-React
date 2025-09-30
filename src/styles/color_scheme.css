@@ -1,10 +1,18 @@
 /* ORANGE COLOR SCHEME */
-.main.orange .sidebar_menu-item-project:hover,
-.main.orange .sidebar_menu-item-project.active,
-.main.orange .sidebar-menu-history-item:not(.none):hover,
-.main.orange .sidebar-menu-history-item:not(.none).active
+.main.light.orange .sidebar_menu-item-project:hover,
+.main.light.orange .sidebar_menu-item-project.active,
+.main.light.orange .sidebar-menu-history-item:not(.none):hover,
+.main.light.orange .sidebar-menu-history-item:not(.none).active
 {
     background-color: #FF4F0020;
+}
+/* ORANGE COLOR SCHEME */
+.main.dark.orange .sidebar_menu-item-project:hover,
+.main.dark.orange .sidebar_menu-item-project.active,
+.main.dark.orange .sidebar-menu-history-item:not(.none):hover,
+.main.dark.orange .sidebar-menu-history-item:not(.none).active
+{
+    background-color: #FF4F0080;
 }
 .main.orange .sidebar-item-block:hover,
 .main.orange .sidebar-item-block.active
@@ -41,9 +49,13 @@
 .main.orange .table-cols-item {
     background-color: #FF4F0080;
 }
-.main.orange .table-body-row.selected
+.main.light.orange .table-body-row.selected
 {
     background-color: #FF4F0030;
+}
+.main.dark.orange .table-body-row.selected
+{
+    background-color: #FF4F0060;
 }
 .main.orange .table-body-row.context-selected
 {

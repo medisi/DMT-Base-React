@@ -270,6 +270,7 @@ const Settings = () => {
     const navigate = useNavigate();
     const handleQuit = () => {
         navigate('/');
+        localStorage.setItem('activeSection', 'profile');
     };
 
     const [modalFontVisible, setModalFontVisible] = useState(false);

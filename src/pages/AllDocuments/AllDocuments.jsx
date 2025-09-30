@@ -7,6 +7,7 @@ import { getDocumentHistory, getDocuments, getDocumentVersions } from '../../api
 import { useAuth } from '../../AuthContext';
 import NameUser from '../../components/NameUser/NameUser';
 import FavoritesTree from '../../components/FavoritesTree/FavoritesTree';
+import { apiUrl } from '../../settings';
 
 const defaultSettings = {
     theme: 'light',
@@ -93,16 +94,17 @@ const AllDocuments = () => {
     const handleQuit = () => {
         navigate('/');
         localStorage.setItem('selectTreeDocs', JSON.stringify(''));
+        localStorage.setItem('selectRow', JSON.stringify(''));
     };
 
     const handleRowDoubleClick = (row) => {
         addToHistoryList(row);
-        navigate(`/open_document/${encodeURIComponent(row.nameBottom)}?documentId=${row.id}&prevPage=all_documents/${encodeURIComponent(projectId)}/${encodeURIComponent(projectName)}`);
+        navigate(`/open_document/${encodeURIComponent(row.nameBottom)}?documentId=${row.id}&prevPage=all_documents/${encodeURIComponent(projectId)}/${encodeURIComponent(projectName)}&ext=${row.extension}&code=${row.code}&name=${row.nameBottom}`);
     };
     const handleViewClick = () => {
         if (currentRow) {
             addToHistoryList(currentRow);
-            navigate(`/open_document/${encodeURIComponent(currentRow.nameBottom)}?documentId=${currentRow.id}&prevPage=all_documents/${encodeURIComponent(projectId)}/${encodeURIComponent(projectName)}`);
+            navigate(`/open_document/${encodeURIComponent(currentRow.nameBottom)}?documentId=${currentRow.id}&prevPage=all_documents/${encodeURIComponent(projectId)}/${encodeURIComponent(projectName)}&ext=${currentRow.extension}&code=${currentRow.code}&name=${currentRow.nameBottom}`);
             handleCloseContextMenu();
         }
     };
@@ -167,6 +169,7 @@ const AllDocuments = () => {
         sheet: row => row.sheet,
         size: row => row.size,
         status: row => row.status,
+        extension: row => row.extension,
     };
 
     const columnAlignments = {
@@ -205,6 +208,7 @@ const AllDocuments = () => {
                 edited: formatDate(doc.edit_date),
                 editedBy: doc.edit_user.name,
                 comments: doc.comments,
+                extension: doc.extension,
             }));
             setAllRows(transformed);
         };
@@ -424,7 +428,8 @@ const AllDocuments = () => {
                 (row.version_ext && row.version_ext.toLowerCase().includes(lowerSearch)) ||
                 String(row.id).includes(lowerSearch) ||
                 (row.createdBy && row.createdBy.toLowerCase().includes(lowerSearch)) ||
-                (row.editedBy && row.editedBy.toLowerCase().includes(lowerSearch))
+                (row.editedBy && row.editedBy.toLowerCase().includes(lowerSearch)) ||
+                (row.extension && row.extension.toLowerCase().includes(lowerSearch))
             );
         // Фильтрация по выбранному списку
         const filtered = selectedList === 'all'
@@ -1002,23 +1007,48 @@ const AllDocuments = () => {
             closeTimerThreeRef.current = null;
         }
     }
-    const handleDownloadClick = () => {
-        downloadExampleDocument();
-        handleCloseContextMenu();
-    };
-    const downloadExampleDocument = () => {
+    // const handleDownloadClick = (row) => {
+    //     // downloadExampleDocument();
+
+    //     if (!row) return;
+    //     // Пример: формируем имя файла
+    //     const fileName = `${row.code}_${row.nameBottom}.${row.extension}`;
+    //     // Формируем URL файла (пример с API)
+    //     const fileUrl = `${apiUrl}/documents/${row.id}/file/`;
+    //     // Создаем временную ссылку для скачивания
+    //     const link = document.createElement('a');
+    //     link.href = fileUrl;
+    //     link.setAttribute('download', fileName);
+    //     link.style.display = 'none';
+    //     // Добавляем в DOM, кликаем и удаляем
+    //     document.body.appendChild(link);
+    //     link.click();
+    //     document.body.removeChild(link);
+
+    //     handleCloseContextMenu();
+    // };
+    const handleDownloadClick = async (row) => {
+        if (!row) return;
         try {
-            // Используем require для корректного пути в React
-            const filePath = require('../../assets/documents/example_doc.pdf');
-            const fileName = 'example_document.pdf';
-            
+            const response = await fetch(`${apiUrl}/documents/${row.id}/file/`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                redirect: 'manual'
+            });
+            if (!response.ok) throw new Error('Ошибка загрузки файла');
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+            const fileName = `${row.code}_${row.nameBottom}.${row.extension}`;
+
             const link = document.createElement('a');
-            link.href = filePath;
+            link.href = url;
             link.setAttribute('download', fileName);
-            
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+
+            URL.revokeObjectURL(url);
         } catch (error) {
             console.error('Ошибка при скачивании:', error);
             setError('Не удалось скачать документ');
@@ -1026,6 +1056,27 @@ const AllDocuments = () => {
             setTimeout(() => setShowError(false), 3000);
         }
     };
+
+    // const downloadExampleDocument = () => {
+    //     try {
+    //         // Используем require для корректного пути в React
+    //         const filePath = require('../../assets/documents/example_doc.pdf');
+    //         const fileName = 'example_document.pdf';
+            
+    //         const link = document.createElement('a');
+    //         link.href = filePath;
+    //         link.setAttribute('download', fileName);
+            
+    //         document.body.appendChild(link);
+    //         link.click();
+    //         document.body.removeChild(link);
+    //     } catch (error) {
+    //         console.error('Ошибка при скачивании:', error);
+    //         setError('Не удалось скачать документ');
+    //         setShowError(true);
+    //         setTimeout(() => setShowError(false), 3000);
+    //     }
+    // };
     const handleActiveModalRow = (e, rowId) => {
         e.preventDefault();
         setIsOneBlockVisible(true);
@@ -1381,6 +1432,8 @@ const AllDocuments = () => {
         }
     }, [isSidebarHidden]); // Перерегистрируем при изменении видимости сайдбара
 
+    const [fileUrl, setFileUrl] = useState(null);
+
     return (
         <>
             <div className={`sidebar ${isSidebarHidden ? 'hidden' : ''}`} ref={sidebarRef} style={{ width: isSidebarHidden ? '0px' : undefined }}>
@@ -1674,7 +1727,7 @@ const AllDocuments = () => {
                     {/* Основной блок - всегда видим */}
                     <div className="modal-info-row-card one">
                         <div className="modal-info-row-card-item" onClick={handleViewClick}>{lang === 'ru' ? 'Посмотреть' : 'View'}</div>
-                        <div className="modal-info-row-card-item" onClick={handleDownloadClick}>{lang === 'ru' ? 'Скачать' : 'Download'}</div>
+                        <div className="modal-info-row-card-item" onClick={() => handleDownloadClick(currentRow)}><a href="#">{lang === 'ru' ? 'Скачать' : 'Download'}</a></div>
                         <div 
                             className="modal-info-row-card-item one"
                             onMouseEnter={handleListBtnOneEnter}

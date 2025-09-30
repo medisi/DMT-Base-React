@@ -175,6 +175,19 @@
 .main.light .modal-security-form input {
     background-color: #0002;
 }
+.main.light .modal-info-row-card.one,
+.main.light .modal-info-row-card-cont.two,
+.main.light .modal-info-row-card.three
+{
+  background-color: #FFF0F0;
+}
+.main.light .modal-info-row-card-item a {
+    color: #000;
+}
+.main.light .modal-info-row-card-item:not(:last-child)::before,
+.main.light .modal-info-row-card-item:hover {
+  background-color: #0001;
+}
 
 
 /* DARK THEME */
@@ -376,4 +389,17 @@
 }
 .main.dark .modal-security-form input {
     background-color: #fff2;
+}
+.main.dark .modal-info-row-card.one,
+.main.dark .modal-info-row-card-cont.two,
+.main.dark .modal-info-row-card.three
+{
+  background-color: #545454;
+}
+.main.dark .modal-info-row-card-item a {
+    color: #fff;
+}
+.main.dark .modal-info-row-card-item:not(:last-child)::before,
+.main.dark .modal-info-row-card-item:hover {
+  background-color: #fff1;
 }

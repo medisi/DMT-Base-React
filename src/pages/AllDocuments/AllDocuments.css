@@ -828,7 +828,6 @@ html {
 .modal-info-row-card-cont.two,
 .modal-info-row-card.three
 {
-  background-color: #FFF0F0;
   padding: 20px;
   border-radius: 10px;
   display: flex;
@@ -850,6 +849,9 @@ html {
   user-select: none;
   width: 100%;
 }
+.modal-info-row-card-item a {
+    text-decoration: none;
+}
 .modal-info-row-card-item.one span {
     width: 100%;
     display: flex;
@@ -867,10 +869,8 @@ html {
 }
 .modal-info-row-card-item:not(:last-child)::before {
   content: '';
-  background-color: #0001;
 }
 .modal-info-row-card-item:hover {
-  background-color: #0001;
   border-radius: 10px;
 }
 

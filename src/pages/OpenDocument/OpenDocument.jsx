@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useAuth } from '../../AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom'; // Импортируйте useNavigate
 import './OpenDocument.css';
@@ -41,7 +41,7 @@ const OpenDocument = () => {
     const [showError, setShowError] = useState(false);
     const navigate = useNavigate();
     const [fileUrl, setFileUrl] = useState(null);
-    const [filename, setFilename] = useState('file');
+    const [filename, setFilename] = useState('file-document');
     const [fileType, setFileType] = useState(null);
     const [loadingFile, setLoadingFile] = useState(false);
     const [errorFile, setErrorFile] = useState(null);
@@ -52,14 +52,11 @@ const OpenDocument = () => {
     // Получаем параметры из URL
     const linkPage = searchParams.get('prevPage');
     const documentId = searchParams.get('documentId');
-    // Получаем название документа из пути
-    // location.pathname: /DMT-Base-React/open_document/название
-    // В вашем случае, если используется hash routing, можно использовать location.hash
+    const documentExt = searchParams.get('ext');
+    const documentCode = searchParams.get('code');
+    const docName = searchParams.get('name');
+
     const location = useLocation();
-    // Если используется hash routing, то:
-    // const path = location.hash.startsWith('#/') ? location.hash.slice(2) : location.hash;
-    // const documentNameEncoded = path.split('/')[1]; // после open_document/
-    // Но проще взять из pathname, если настроен роутинг без хеша:
     const pathParts = location.pathname.split('/');
     // Ищем индекс open_document
     const openDocIndex = pathParts.findIndex(part => part === 'open_document');
@@ -71,41 +68,43 @@ const OpenDocument = () => {
     const encodedPrevPage = encodeURIComponent(
         `/open_document/${documentNameEncoded}/?documentId=${documentId}&prevPage=${linkPage}`
     );
+
     // Применяем настройки при монтировании и при изменении settings
     useEffect(() => {
         applySettings(settings);
     }, [settings]);
     // Загрузка файла документа
-    useEffect(() => {
-        if (!documentId || !token) return;
-        const fetchDocumentFile = async () => {
-            setLoadingFile(true);
-            setErrorFile(null);
-            try {
-                const response = await fetch(`${apiUrl}/documents/${documentId}/file/`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                if (!response.ok) {
-                    throw new Error(`Ошибка загрузки документа: ${response.statusText}`);
-                }
-                const blob = await response.blob();
-                const url = URL.createObjectURL(blob);
-                setFileUrl(url);
-            } catch (err) {
-                setErrorFile(err.message);
-            } finally {
-                setLoadingFile(false);
-            }
-        };
-        fetchDocumentFile();
-        return () => {
-            if (fileUrl) {
-                URL.revokeObjectURL(fileUrl);
-            }
-        };
-    }, [documentId, token]);
+    // useEffect(() => {
+    //     if (!documentId || !token) return;
+    //     const fetchDocumentFile = async () => {
+    //         setLoadingFile(true);
+    //         setErrorFile(null);
+    //         try {
+    //             const response = await fetch(`${apiUrl}/documents/${documentId}/file/`, {
+    //                 headers: {
+    //                     Authorization: `Bearer ${token}`,
+    //                 },
+    //             });
+    //             // console.log('response: ', response);
+    //             if (!response.ok) {
+    //                 throw new Error(`Ошибка загрузки документа: ${response.statusText}`);
+    //             }
+    //             const blob = await response.blob();
+    //             const url = URL.createObjectURL(blob);
+    //             setFileUrl(url);
+    //         } catch (err) {
+    //             setErrorFile(err.message);
+    //         } finally {
+    //             setLoadingFile(false);
+    //         }
+    //     };
+    //     fetchDocumentFile();
+    //     return () => {
+    //         if (fileUrl) {
+    //             URL.revokeObjectURL(fileUrl);
+    //         }
+    //     };
+    // }, [documentId, token]);
     // Обработчики пароля
     const togglePasswordVisibility = () => {
         setPasswordVisible(!passwordVisible);
@@ -138,37 +137,9 @@ const OpenDocument = () => {
     const onDocumentLoadSuccess = ({ numPages }) => {
         setNumPages(numPages);
     };
-    // useEffect(() => {
-    //     if (!documentId || !token) return;
-    //     const fetchDocumentFile = async () => {
-    //         setLoadingFile(true);
-    //         setErrorFile(null);
-    //         try {
-    //             const response = await fetch(`${apiUrl}/documents/${documentId}/file/`, {
-    //                 headers: {
-    //                     Authorization: `Bearer ${token}`,
-    //                 },
-    //             });
-    //             if (!response.ok) {
-    //                 throw new Error(`Ошибка загрузки документа: ${response.statusText}`);
-    //             }
-    //             const blob = await response.blob();
-    //             setFileType(blob.type); // сохраняем MIME тип
-    //             const url = URL.createObjectURL(blob);
-    //             setFileUrl(url);
-    //         } catch (err) {
-    //             setErrorFile(err.message);
-    //         } finally {
-    //             setLoadingFile(false);
-    //         }
-    //     };
-    //     fetchDocumentFile();
-    //     return () => {
-    //         if (fileUrl) {
-    //             URL.revokeObjectURL(fileUrl);
-    //         }
-    //     };
-    // }, [documentId, token]);
+
+    const [fileExtension, setFileExtension] = useState();
+
     useEffect(() => {
         if (!documentId || !token) return;
         const fetchDocumentFile = async () => {
@@ -180,27 +151,28 @@ const OpenDocument = () => {
                         Authorization: `Bearer ${token}`,
                     },
                 });
-                console.log('response: ', response);
                 if (!response.ok) {
                     throw new Error(`Ошибка загрузки документа: ${response.statusText}`);
                 }
                 // const contentDisposition = response.headers.get('Content-Disposition') || response.headers.get('content-disposition');
-                const contentDisposition = response.headers.get('Content-Disposition') || response.headers.get('content-disposition');
-                console.log(contentDisposition); // null
-                let filename = 'file';
-                if (contentDisposition) {
-                    // const filenameMatch = contentDisposition.match(/filename\*?=(?:UTF-8'')?["']?([^"';]+)["']?/i);
-                    // if (filenameMatch && filenameMatch[1]) {
-                    //     filename = decodeURIComponent(filenameMatch[1]);
-                    // }
-                    const filenameStarMatch = contentDisposition.match(/filename\*=UTF-8''([^;\r\n]+)/i);
-  const filenameMatch = contentDisposition.match(/filename="([^"]+)"/i);
-  if (filenameStarMatch && filenameStarMatch[1]) {
-    filename = decodeURIComponent(filenameStarMatch[1]);
-  } else if (filenameMatch && filenameMatch[1]) {
-    filename = filenameMatch[1];
-  }
-                }
+                // let filename = 'file';
+                // if (contentDisposition) {
+                //     // Попытка получить filename*=UTF-8''encodedfilename
+                //     const filenameStarMatch = contentDisposition.match(/filename\*=UTF-8''([^;\r\n]+)/i);
+                //     if (filenameStarMatch && filenameStarMatch[1]) {
+                //         filename = decodeURIComponent(filenameStarMatch[1]);
+                //     } else {
+                //         // Попытка получить filename="filename"
+                //         const filenameMatch = contentDisposition.match(/filename="?([^\";]+)"?/i);
+                //         if (filenameMatch && filenameMatch[1]) {
+                //             filename = filenameMatch[1];
+                //         }
+                //     }
+                // }
+                const extension = response.headers.get('Content-Type') || response.headers.get('content-type');
+                setFileExtension(extension.split('/').pop().toLowerCase());
+
+
                 const blob = await response.blob();
                 setFileType(blob.type);
                 const url = URL.createObjectURL(blob);
@@ -220,22 +192,15 @@ const OpenDocument = () => {
         };
     }, [documentId, token]);
 
-    const fileExtension = filename.split('.').pop().toLowerCase();
-
     return (
         <div className="open_doc-container">
             <div className="open_document-header">
-                {/* <Link to={linkAllDocs} id="open_doc-btn"> */}
                 <Link to={linkPage ? `/${linkPage}` : '/all_documents'} id="open_doc-btn">
                     <img src={require('../../assets/icons/arrow.png')} alt="" />
                 </Link>
                 {/* <div className="open_doc-title"><span>Название документа</span></div> */}
                 <div className="open_doc-title"><span>{documentName}</span></div>
                 <div className="open_doc-btns">
-                    {/* <Link to={`/settings?prevPage=open_document/${encodeURIComponent(documentName)}/?documentId=${documentId}&prevPage=${linkPage}`} className='open_doc-btn settings'>
-                        <img src={require('../../assets/icons/settings.png')} alt="" />
-                    </Link> */}
-                    {/* <Link to={`/settings?prevPage=${encodedPrevPage}`} className='open_doc-btn settings'> */}
                     <Link to={`/settings?prevPage=${encodedPrevPage}`} className='open_doc-btn settings'>
                         <img src={require('../../assets/icons/settings.png')} alt="" />
                     </Link>
@@ -248,38 +213,19 @@ const OpenDocument = () => {
                 {loadingFile && <div>Загрузка документа...</div>}
                 {errorFile && <div style={{color: 'red'}}>{error}</div>}
                 {!loadingFile && !errorFile && fileUrl && (
-                    <iframe
-                        src={fileUrl}
-                        title='document'
-                    />
-            //         <>
-            //             {fileExtension === 'pdf' ? (
-            //                 <iframe
-            //                     src={fileUrl}
-            //                     title='document'
-            //                 />
-            //             ) : (
-            //                 <div style={{ padding: '20px', textAlign: 'center' }}>
-            //     <p>Файл: <strong>{filename}</strong></p>
-            //     <a
-            //       href={fileUrl}
-            //       download={filename}
-            //       style={{
-            //         display: 'inline-block',
-            //         marginTop: '10px',
-            //         padding: '10px 20px',
-            //         backgroundColor: '#FF4F00',
-            //         color: 'white',
-            //         borderRadius: '5px',
-            //         textDecoration: 'none',
-            //         cursor: 'pointer',
-            //       }}
-            //     >
-            //       Скачать файл
-            //     </a>
-            //   </div>
-            //             )}
-            //         </>
+                    <>
+                        {fileExtension === 'pdf' ? (
+                            <iframe
+                                style={{filter: 'invert(100%)'}}
+                                src={fileUrl}
+                            />
+                        ) : (
+                            <div>
+                                <span>Файл: <span>{`${documentCode}_${docName}.${documentExt}`}</span></span>
+                                <a href={fileUrl} download={`${documentCode}_${docName}.${documentExt}`}>Скачать</a>
+                            </div>
+                        )}
+                    </>
                 )}
             </div>
         </div>
