@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/DMT-Base-React/static/css/main.3ccacd3c.css",
-    "main.js": "/DMT-Base-React/static/js/main.660a5f62.js",
+    "main.css": "/DMT-Base-React/static/css/main.ddfd3424.css",
+    "main.js": "/DMT-Base-React/static/js/main.e073d8f5.js",
     "static/js/453.6da876f2.chunk.js": "/DMT-Base-React/static/js/453.6da876f2.chunk.js",
     "static/media/logo.webm": "/DMT-Base-React/static/media/logo.777fec5f88a3b374731c.webm",
     "static/media/bgimage12.png": "/DMT-Base-React/static/media/bgimage12.54aa54eb2d90a01250f1.png",
@@ -33,15 +33,14 @@
     "static/media/PTSans-Regular.ttf": "/DMT-Base-React/static/media/PTSans-Regular.77e92507394e2309d837.ttf",
     "static/media/bgimage17.png": "/DMT-Base-React/static/media/bgimage17.7420a1ccde32be3e6151.png",
     "static/media/bgimage5.png": "/DMT-Base-React/static/media/bgimage5.f34baf445e7a8824a4d0.png",
-    "static/media/example_doc.pdf": "/DMT-Base-React/static/media/example_doc.fad18db437fc3ae2d95b.pdf",
     "static/media/Sansation-Regular.ttf": "/DMT-Base-React/static/media/Sansation-Regular.8b7bbfcc7285a2757ff5.ttf",
     "index.html": "/DMT-Base-React/index.html",
-    "main.3ccacd3c.css.map": "/DMT-Base-React/static/css/main.3ccacd3c.css.map",
-    "main.660a5f62.js.map": "/DMT-Base-React/static/js/main.660a5f62.js.map",
+    "main.ddfd3424.css.map": "/DMT-Base-React/static/css/main.ddfd3424.css.map",
+    "main.e073d8f5.js.map": "/DMT-Base-React/static/js/main.e073d8f5.js.map",
     "453.6da876f2.chunk.js.map": "/DMT-Base-React/static/js/453.6da876f2.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.3ccacd3c.css",
-    "static/js/main.660a5f62.js"
+    "static/css/main.ddfd3424.css",
+    "static/js/main.e073d8f5.js"
   ]
 }
