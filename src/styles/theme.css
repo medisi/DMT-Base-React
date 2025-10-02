@@ -158,6 +158,9 @@
 .main.light #button-login {
     color: #fff;
 }
+.main.light #button-login:hover {
+    color: #000;
+}
 .main.light .main-table thead tr th:not(:last-child)::before {
     background-color: #0002;
 }

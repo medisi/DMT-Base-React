@@ -40,8 +40,6 @@ const Login = () => {
     document.title = `DMT Base | ${lang === 'ru' ? 'Войти' : 'Login'}`;
 
     
-
-    
     const { login } = useAuth();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');

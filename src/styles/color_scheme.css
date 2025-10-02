@@ -27,14 +27,12 @@
     .main.orange #button-login:hover {
         background-color: transparent;
         border: 1px solid #FF4F00;
-        color: hsl(0, 0%, 0%);
     }
 }
 @media (hover :none) {
     .main.orange #button-login:active {
         background-color: transparent;
         border: 1px solid #FF4F00;
-        color: hsl(0, 0%, 0%);
     }
 }
 .main.light.orange .sidebar_settings-menu-item.active {
@@ -113,7 +111,6 @@
     .main.blue #button-login:active {
         background-color: #7EBBF050;
         border: 1px solid #7EBBF010;
-        color: #000;
     }
 }
 .main.light.blue .sidebar_settings-menu-item.active {
@@ -180,14 +177,12 @@
     .main.gray #button-login:hover {
         background-color: #91919150;
         border: 1px solid #91919110;
-        color: #000;
     }
 }
 @media (hover :none) {
     .main.gray #button-login:active {
         background-color: #91919150;
         border: 1px solid #91919110;
-        color: #000;
     }
 }
 .main.light.gray .sidebar_settings-menu-item.active {
@@ -254,14 +249,12 @@
     .main.green #button-login:hover {
         background-color: #4ad44a50;
         border: 1px solid #4ad44a10;
-        color: #000;
     }
 }
 @media (hover :none) {
     .main.green #button-login:active {
         background-color: #4ad44a50;
         border: 1px solid #4ad44a10;
-        color: #000;
     }
 }
 .main.light.green .sidebar_settings-menu-item.active {

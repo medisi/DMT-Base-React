@@ -90,6 +90,18 @@ const AllDocuments = () => {
     const { projectId, projectName } = useParams();
     const { token } = useAuth();
 
+    // РАБОТА СО СТРОКАМ
+    const [selectedRowId, setSelectedRowId] = useState(null); 
+    const [lastSelectedRowId, setLastSelectedRowId] = useState(null);
+    const [selectedRowColor, setSelectedRowColor] = useState(false);
+    const [favorites, setFavorites] = useState([]);
+    const [isSorted, setIsSorted] = useState(false);
+    const [originalRows, setOriginalRows] = useState([]);
+    const [filteredRowsBeforeSort, setFilteredRowsBeforeSort] = useState(null);
+    const [isSortedByFavorites, setIsSortedByFavorites] = useState(false);
+    const [error, setError] = useState(null);
+    const [showError, setShowError] = useState(false);
+
     const navigate = useNavigate();
     const handleQuit = () => {
         navigate('/');
@@ -225,7 +237,6 @@ const AllDocuments = () => {
         }
     }, [filterSource, selectedFilterIds, allRows]);
 
-
     const handleProjectSelect = async (selectedIds) => {
         setFilterSource('tree');
         setSelectedFilterIds(selectedIds);
@@ -286,28 +297,46 @@ const AllDocuments = () => {
         return defaultWidths;
     };
     const [columnWidths, setColumnWidths] = useState(() => loadColumnWidths(settings.columsTable || defaultSettings.columsTable));
-    // const [columnWidths, setColumnWidths] = useState(() => {
-    //     // Инициализируем ширины для выбранных колонок
-    //     const widths = {};
-    //     (settings.columsTable || defaultSettings.columsTable).forEach(key => {
-    //         widths[key] = 150; // стартовая ширина 150px
-    //     });
-    //     return widths;
-    // });
     const totalTableWidth = selectedColumns.reduce((sum, key) => sum + (columnWidths[key] || 150), 0) + 40;
-    // При изменении selectedColumns добавляем ширины для новых колонок
-    // useEffect(() => {
-    //     setColumnWidths(prevWidths => {
-    //         const newWidths = { ...prevWidths };
-    //         selectedColumns.forEach(key => {
-    //         if (!newWidths[key]) {
-    //             newWidths[key] = 150;
-    //         }
-    //         });
-    //         // Можно удалить ширины для колонок, которых нет в selectedColumns, если нужно
-    //         return newWidths;
-    //     });
-    // }, [selectedColumns]);
+    // Состояние для отслеживания столбцов в авто-режиме (Set ключей)
+    const [autoResizedColumns, setAutoResizedColumns] = useState(new Set());
+    // Состояние для хранения предыдущих (оригинальных) ширин столбцов
+    const [savedWidths, setSavedWidths] = useState({});
+
+    // Функция для вычисления максимальной ширины столбца под контент
+    const calculateMaxWidth = (key) => {
+        // Создаем временный offscreen-элемент для измерения (не добавляем в DOM)
+        const measurer = document.createElement('div');
+        measurer.style.position = 'absolute';
+        measurer.style.visibility = 'hidden';
+        measurer.style.whiteSpace = 'nowrap';  // Без переноса строк
+        measurer.style.fontFamily = settings.fontFamily;
+        measurer.style.fontSize = settings.fontSize + 'px';
+        measurer.style.padding = '0 10px';  // Учитываем padding ячеек (скорректируйте по CSS)
+        measurer.style.boxSizing = 'border-box';
+        measurer.style.border = 'none';  // Без границ
+        // ← Добавьте стили для имитации max-width (если нужно точнее, но для простоты хватит ограничения в конце)
+        measurer.style.maxWidth = '400px';  // Опционально: имитируем CSS max-width для измерения
+        measurer.style.overflow = 'hidden';  // Чтобы scrollWidth учитывал обрезку
+        document.body.appendChild(measurer);  // Временно добавляем для измерения
+        let maxWidth = 0;
+        // Измеряем заголовок
+        measurer.innerText = columnLabels[key];
+        maxWidth = Math.max(maxWidth, measurer.scrollWidth);
+        // Измеряем все ячейки в столбце
+        sortedRows.forEach(row => {
+            const cellContent = columnRenderers[key] ? columnRenderers[key](row) : '';
+            measurer.innerText = typeof cellContent === 'string' ? cellContent : String(cellContent);
+            maxWidth = Math.max(maxWidth, measurer.scrollWidth);
+        });
+        // Удаляем элемент
+        document.body.removeChild(measurer);
+        // Добавляем запас для отступов/иконок (минимум 100px, максимум 400px по CSS)
+        let finalWidth = Math.max(maxWidth + 20, 100);
+        finalWidth = Math.min(finalWidth, 400);  // Ограничение по max-width CSS
+        return finalWidth;
+    };
+   
     useEffect(() => {
         setColumnWidths(prevWidths => {
             const newWidths = {};
@@ -321,8 +350,9 @@ const AllDocuments = () => {
     const resizingCol = useRef(null);
     const startX = useRef(0);
     const startWidth = useRef(0);
-    const onMouseDownResize = (e, key) => {
+        const onMouseDownResize = (e, key) => {
         e.preventDefault();
+        e.stopPropagation();  // ← Добавьте это: останавливает bubbling к <th>
         resizingCol.current = key;
         startX.current = e.clientX;
         startWidth.current = columnWidths[key] || 150;
@@ -332,50 +362,117 @@ const AllDocuments = () => {
     const onMouseMoveResize = (e) => {
         if (!resizingCol.current) return;
         const deltaX = e.clientX - startX.current;
-        const newWidth = Math.max(50, startWidth.current + deltaX);
+        let newWidth = Math.max(50, startWidth.current + deltaX);
+        newWidth = Math.min(newWidth, 400);  // ← Добавьте: максимум 400px
         setColumnWidths(prev => {
             const updated = { ...prev, [resizingCol.current]: newWidth };
-            try {
-                localStorage.setItem(COLUMN_WIDTHS_STORAGE_KEY, JSON.stringify(updated));
-            } catch (e) {
-                console.warn('Ошибка сохранения ширин колонок в localStorage', e);
-            }
+            // ... сохранение в localStorage без изменений
             return updated;
         });
     };
     const onMouseUpResize = () => {
+        const colToCheck = resizingCol.current;  // ← Сохраните значение перед null
         resizingCol.current = null;
         document.removeEventListener('mousemove', onMouseMoveResize);
         document.removeEventListener('mouseup', onMouseUpResize);
+        // Теперь проверка работает
+        if (colToCheck && autoResizedColumns.has(colToCheck)) {
+            setAutoResizedColumns(prev => {
+                const newSet = new Set(prev);
+                newSet.delete(colToCheck);
+                return newSet;
+            });
+            setSavedWidths(prev => ({
+                ...prev,
+                [colToCheck]: columnWidths[colToCheck]
+            }));
+        }
     };
     const onTouchStartResize = (e, key) => {
         e.preventDefault();
+        e.stopPropagation();  // ← Добавьте это: останавливает bubbling к <th>
         resizingCol.current = key;
         startX.current = e.touches[0].clientX;
         startWidth.current = columnWidths[key] || 150;
         document.addEventListener('touchmove', onTouchMoveResize, { passive: false });
         document.addEventListener('touchend', onTouchEndResize);
     };
+   
     const onTouchMoveResize = (e) => {
         if (!resizingCol.current) return;
-        e.preventDefault(); // предотвращаем скролл страницы при перетаскивании
+        e.preventDefault();
         const deltaX = e.touches[0].clientX - startX.current;
-        const newWidth = Math.max(50, startWidth.current + deltaX);
+        let newWidth = Math.max(50, startWidth.current + deltaX);
+        newWidth = Math.min(newWidth, 400);  // ← Добавьте: максимум 400px
         setColumnWidths(prev => {
             const updated = { ...prev, [resizingCol.current]: newWidth };
-            try {
-                localStorage.setItem(COLUMN_WIDTHS_STORAGE_KEY, JSON.stringify(updated));
-            } catch (e) {
-                console.warn('Ошибка сохранения ширин колонок в localStorage', e);
-            }
+            // ... сохранение без изменений
             return updated;
         });
     };
     const onTouchEndResize = () => {
+        const colToCheck = resizingCol.current;  // ← Аналогично
         resizingCol.current = null;
         document.removeEventListener('touchmove', onTouchMoveResize);
         document.removeEventListener('touchend', onTouchEndResize);
+        if (colToCheck && autoResizedColumns.has(colToCheck)) {
+            setAutoResizedColumns(prev => {
+                const newSet = new Set(prev);
+                newSet.delete(colToCheck);
+                return newSet;
+            });
+            setSavedWidths(prev => ({
+                ...prev,
+                [colToCheck]: columnWidths[colToCheck]
+            }));
+        }
     };
+    
+    // Обработчик двойного клика на ручку: toggle авто-ширины
+    const handleDoubleClickResize = (e, key) => {
+        e.preventDefault();
+        e.stopPropagation();  // Предотвращаем клик на заголовок
+
+        setColumnWidths(prevWidths => {
+            const currentWidth = prevWidths[key] || 150;
+            const newWidths = { ...prevWidths };
+
+            if (autoResizedColumns.has(key)) {
+                // Если в авто-режиме: возвращаем к сохраненной ширине и выходим из авто
+                let savedWidth = savedWidths[key] || 150;
+                savedWidth = Math.min(savedWidth, 400);  // ← Добавьте: ограничение при возврате
+                newWidths[key] = savedWidth;
+                setAutoResizedColumns(prev => {
+                    const newSet = new Set(prev);
+                    newSet.delete(key);
+                    return newSet;
+                });
+                setSavedWidths(prev => {
+                    const newSaved = { ...prev };
+                    delete newSaved[key];  // Очищаем сохраненную, если нужно
+                    return newSaved;
+                });
+                return newWidths;
+            } else {
+                // Если не в авто: сохраняем текущую, вычисляем max и переходим в авто
+                setSavedWidths(prev => ({ ...prev, [key]: currentWidth }));
+                const maxWidth = calculateMaxWidth(key);
+                newWidths[key] = maxWidth;
+                setAutoResizedColumns(prev => new Set([...prev, key]));
+                return newWidths;
+            }
+        });
+
+        // Сохраняем в localStorage после обновления
+        setTimeout(() => {
+            try {
+                localStorage.setItem(COLUMN_WIDTHS_STORAGE_KEY, JSON.stringify(columnWidths));
+            } catch (e) {
+                console.warn('Ошибка сохранения ширин в localStorage', e);
+            }
+        }, 0);
+    };
+   
     
     
     useEffect(() => {
@@ -634,37 +731,27 @@ const AllDocuments = () => {
         // если есть другие модалки — закрывайте их тоже
     };
     useEffect(() => {
-  const handleEsc = (event) => {
-    if (event.key === 'Escape' || event.key === 'Esc') {
-      // Приводим к булеву, если в localStorage хранится строка
-      const escCloseBool = settings.escClose === true || settings.escClose === 'true';
-      console.log('Escape pressed, escClose:', escCloseBool);
-      if (!escCloseBool) {
-        // Если escClose false — не закрываем модалки
-        return;
-      }
-      if (isModalOpenAdd || isEditModalOpen || isDeleteModalOpen) {
-        closeAllModals();
-      }
-    }
-  };
-  window.addEventListener('keydown', handleEsc);
-  return () => {
-    window.removeEventListener('keydown', handleEsc);
-  };
-}, [settings.escClose, isModalOpenAdd, isEditModalOpen, isDeleteModalOpen]);
+    const handleEsc = (event) => {
+        if (event.key === 'Escape' || event.key === 'Esc') {
+            // Приводим к булеву, если в localStorage хранится строка
+            const escCloseBool = settings.escClose === true || settings.escClose === 'true';
+            console.log('Escape pressed, escClose:', escCloseBool);
+            if (!escCloseBool) {
+                // Если escClose false — не закрываем модалки
+                return;
+            }
+            if (isModalOpenAdd || isEditModalOpen || isDeleteModalOpen) {
+                closeAllModals();
+            }
+        }
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => {
+        window.removeEventListener('keydown', handleEsc);
+    };
+    }, [settings.escClose, isModalOpenAdd, isEditModalOpen, isDeleteModalOpen]);
     
     // РАБОТА СО СТРОКАМ
-    const [selectedRowId, setSelectedRowId] = useState(null); 
-    const [lastSelectedRowId, setLastSelectedRowId] = useState(null);
-    const [selectedRowColor, setSelectedRowColor] = useState(false);
-    const [favorites, setFavorites] = useState([]);
-    const [isSorted, setIsSorted] = useState(false);
-    const [originalRows, setOriginalRows] = useState([]);
-    const [filteredRowsBeforeSort, setFilteredRowsBeforeSort] = useState(null);
-    const [isSortedByFavorites, setIsSortedByFavorites] = useState(false);
-    const [error, setError] = useState(null);
-    const [showError, setShowError] = useState(false);
 
     useEffect(() => {
         // Загружаем выбранный id из localStorage при монтировании компонента
@@ -1303,77 +1390,44 @@ const AllDocuments = () => {
     const handleChangeFavorites = () => {
         setSidebarMode(prev => (prev === 'favorites' ? 'main' : 'favorites'));
     };
-    // useEffect(() => {
-    //     if (isHistoryActive) {
-    //         // Фильтруем и сортируем filteredRows по истории
-    //         const savedHistory = JSON.parse(localStorage.getItem('historyList')) || [];
-    //         if (savedHistory.length === 0) return; // если истории нет, ничего не делаем
-    //         // Фильтруем по выбранной ветке (selectedFilterIds)
-    //         let filteredByBranch = [];
-    //         if (selectedFilterIds.length === 0) {
-    //             filteredByBranch = allRows;
-    //         } else {
-    //             filteredByBranch = allRows.filter(row => selectedFilterIds.includes(row.id_type));
-    //         }
-    //         // Сортируем filteredByBranch так, чтобы последние просмотренные были сверху
-    //         const historyIds = savedHistory.map(item => item.id).reverse();
-
-    //         const sorted = [...filteredByBranch].sort((a, b) => {
-    //             const aIndex = historyIds.indexOf(a.id);
-    //             const bIndex = historyIds.indexOf(b.id);
-    //             if (aIndex === -1 && bIndex === -1) return 0;
-    //             if (aIndex === -1) return 1;
-    //             if (bIndex === -1) return -1;
-    //             return aIndex - bIndex;
-    //         });
-    //         setFilteredRows(sorted);
-    // } else {
-    //         // При выключении истории возвращаем фильтр по ветке без сортировки по истории
-    //         if (selectedFilterIds.length === 0) {
-    //             setFilteredRows(allRows);
-    //         } else {
-    //             setFilteredRows(allRows.filter(row => selectedFilterIds.includes(row.id_type)));
-    //         }
-    //     }
-    // }, [isHistoryActive, selectedFilterIds, allRows]);
+    
     useEffect(() => {
-    if (isHistoryActive) {
-        const savedHistory = JSON.parse(localStorage.getItem('historyList')) || [];
-        if (savedHistory.length === 0) {
-            setFilteredRows([]); // если истории нет, показываем пустой список
-            return;
-        }
+        if (isHistoryActive) {
+            const savedHistory = JSON.parse(localStorage.getItem('historyList')) || [];
+            if (savedHistory.length === 0) {
+                setFilteredRows([]); // если истории нет, показываем пустой список
+                return;
+            }
 
-        // Получаем id из истории в обратном порядке (последние сверху)
-        const historyIdsReversed = savedHistory.map(item => item.id).reverse();
+            // Получаем id из истории в обратном порядке (последние сверху)
+            const historyIdsReversed = savedHistory.map(item => item.id).reverse();
 
-        // Фильтруем allRows по выбранной ветке (selectedFilterIds), если есть фильтр
-        let filteredByBranch = [];
-        if (selectedFilterIds.length === 0) {
-            filteredByBranch = allRows;
+            // Фильтруем allRows по выбранной ветке (selectedFilterIds), если есть фильтр
+            let filteredByBranch = [];
+            if (selectedFilterIds.length === 0) {
+                filteredByBranch = allRows;
+            } else {
+                filteredByBranch = allRows.filter(row => selectedFilterIds.includes(row.id_type));
+            }
+
+            // Оставляем только те строки, id которых есть в истории
+            const filteredByHistory = filteredByBranch.filter(row => historyIdsReversed.includes(row.id));
+
+            // Сортируем по порядку в истории (последние сверху)
+            const sorted = filteredByHistory.sort((a, b) => {
+                return historyIdsReversed.indexOf(a.id) - historyIdsReversed.indexOf(b.id);
+            });
+
+            setFilteredRows(sorted);
         } else {
-            filteredByBranch = allRows.filter(row => selectedFilterIds.includes(row.id_type));
+            // При выключении истории возвращаем фильтр по ветке без сортировки по истории
+            if (selectedFilterIds.length === 0) {
+                setFilteredRows(allRows);
+            } else {
+                setFilteredRows(allRows.filter(row => selectedFilterIds.includes(row.id_type)));
+            }
         }
-
-        // Оставляем только те строки, id которых есть в истории
-        const filteredByHistory = filteredByBranch.filter(row => historyIdsReversed.includes(row.id));
-
-        // Сортируем по порядку в истории (последние сверху)
-        const sorted = filteredByHistory.sort((a, b) => {
-            return historyIdsReversed.indexOf(a.id) - historyIdsReversed.indexOf(b.id);
-        });
-
-        setFilteredRows(sorted);
-    } else {
-        // При выключении истории возвращаем фильтр по ветке без сортировки по истории
-        if (selectedFilterIds.length === 0) {
-            setFilteredRows(allRows);
-        } else {
-            setFilteredRows(allRows.filter(row => selectedFilterIds.includes(row.id_type)));
-        }
-    }
-}, [isHistoryActive, selectedFilterIds, allRows]);
-
+    }, [isHistoryActive, selectedFilterIds, allRows]);
 
     const rowsToDisplay = sidebarNode === 'favorites'
     ? filteredRows.filter(row =>
@@ -1384,6 +1438,95 @@ const AllDocuments = () => {
         )
         )
     : filteredRows;
+
+    const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
+    const sortRows = (rows, config) => {
+        if (!config.key) return rows;
+        const { key, direction } = config;
+        const getValue = (row) => {
+            switch (key) {
+                case 'id':
+                    return Number(row.id) || 0;
+                case 'size':
+                    return Number(row.size) || 0;
+                case 'created':
+                case 'edited':
+                    if (!row[key]) return new Date(0);
+                    const parts = row[key].split('.');
+                    if (parts.length !== 3) return new Date(0);
+                    return new Date(parts[2], parts[1] - 1, parts[0]);
+                case 'version':
+                case 'version_ext':
+                case 'code':
+                case 'nameTop':
+                case 'nameBottom':
+                    return row[key] ? row[key].toString().toLowerCase() : '';
+                case 'whomCreated':
+                    return row.createdBy ? row.createdBy.toString().toLowerCase() : '';  // Используем createdBy из данных
+                case 'whomEdited':
+                    return row.editedBy ? row.editedBy.toString().toLowerCase() : '';  // Используем editedBy из данных
+                case 'sheet':
+                    return row.sheet ? row.sheet.toString().toLowerCase() : '';
+                case 'status':
+                    return row.status ? row.status.toString().toLowerCase() : '';
+                default:
+                    return row[key] ? row[key].toString().toLowerCase() : '';
+            }
+        };
+        const sorted = [...rows].sort((a, b) => {
+            const aVal = getValue(a);
+            const bVal = getValue(b);
+            if (aVal < bVal) return direction === 'asc' ? -1 : 1;
+            if (aVal > bVal) return direction === 'asc' ? 1 : -1;
+            return 0;
+        });
+        return sorted;
+    };
+    
+    const handleSort = (key) => {
+        setSortConfig(prev => {
+            if (prev.key !== key) {
+                // Новый столбец: начинаем с asc
+                return { key, direction: 'asc' };
+            } else {
+                // Тот же столбец: переключаем asc → desc → none (сброс)
+                if (prev.direction === 'asc') {
+                    return { key, direction: 'desc' };
+                } else if (prev.direction === 'desc') {
+                    return { key: null, direction: null };  // Сброс
+                } else {
+                    // Если был none, начинаем с asc (на всякий случай)
+                    return { key, direction: 'asc' };
+                }
+            }
+        });
+    };
+   
+    const sortedRows = sortRows(rowsToDisplay, sortConfig);
+
+    // Пересчет авто-ширин при изменении данных (filteredRows, settings и т.д.)
+    useEffect(() => {
+        if (autoResizedColumns.size > 0) {
+            setColumnWidths(prevWidths => {
+                let updated = { ...prevWidths };
+                autoResizedColumns.forEach(key => {
+                    const maxWidth = calculateMaxWidth(key);
+                    updated[key] = maxWidth;
+                });
+
+                // В конце useEffect для пересчета, после setColumnWidths:
+                try {
+                    localStorage.setItem(COLUMN_WIDTHS_STORAGE_KEY, JSON.stringify(updated));
+                } catch (e) {
+                    console.warn('Ошибка сохранения ширин в localStorage', e);
+                }
+
+                return updated;
+            });
+        }
+    }, [sortedRows, settings.fontFamily, settings.fontSize, autoResizedColumns]);  // Зависимости: строки, шрифт
+   
+    
 
     const handleFilterByFavoriteIdType = (idType) => {
         setFilterSource('favorites'); // или другой флаг, если нужно
@@ -1845,14 +1988,22 @@ const AllDocuments = () => {
                                 <th
                                     key={key}
                                     className={['id', 'version_ext', 'created', 'edited'].includes(key) ? 'cell-row-small styled-text' : 'styled-text'}
-                                    style={{ width: columnWidths[key], textAlign: columnAlignments[key] }}
+                                    style={{ width: columnWidths[key], textAlign: columnAlignments[key], cursor: 'pointer' }}
+                                    onClick={() => handleSort(key)}
                                 >
                                     <div style={{ position: 'relative', userSelect: 'none' }}>
                                         {columnLabels[key]}
+                                        {sortConfig.key === key && sortConfig.direction && (
+                                            <span style={{ marginLeft: 5 }}>
+                                                {sortConfig.direction === 'asc' ? '▲' : '▼'}
+                                            </span>
+                                        )}
                                         {/* Ручка для изменения ширины */}
                                         <div
                                             onMouseDown={(e) => onMouseDownResize(e, key)}
                                             onTouchStart={(e) => onTouchStartResize(e, key)}
+                                            onDoubleClick={(e) => handleDoubleClickResize(e, key)}
+                                            onClick={(e) => e.stopPropagation()}
                                             style={{
                                                 position: 'absolute',
                                                 right: '-13px',
@@ -1870,7 +2021,7 @@ const AllDocuments = () => {
                             </tr>
                         </thead>
                         <tbody id="table-body">
-                            {rowsToDisplay.map((row, index) => {
+                            {sortedRows.map((row, index) => {
                                 const isFavorite = favorites.some(fav =>
                                     fav.projectId === projectId &&
                                     fav.id_type === row.id_type &&
