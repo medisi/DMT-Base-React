@@ -3,7 +3,7 @@ import './AllDocuments.css';
 import { Link, useHref, useNavigate, useParams } from 'react-router-dom';
 import ProjectTree from '../../components/ProjectTree/ProjectTree';
 import NameDatabase from '../../components/NameDatabase/NameDatabase';
-import { getDocumentHistory, getDocuments, getDocumentVersions } from '../../api';
+import { getDocumentFile, getDocumentHistory, getDocuments, getDocumentVersions } from '../../api';
 import { useAuth } from '../../AuthContext';
 import NameUser from '../../components/NameUser/NameUser';
 import FavoritesTree from '../../components/FavoritesTree/FavoritesTree';
@@ -1094,76 +1094,174 @@ const AllDocuments = () => {
             closeTimerThreeRef.current = null;
         }
     }
-    // const handleDownloadClick = (row) => {
-    //     // downloadExampleDocument();
-
+    // const handleDownloadClick = async (row) => {
     //     if (!row) return;
-    //     // Пример: формируем имя файла
-    //     const fileName = `${row.code}_${row.nameBottom}.${row.extension}`;
-    //     // Формируем URL файла (пример с API)
-    //     const fileUrl = `${apiUrl}/documents/${row.id}/file/`;
-    //     // Создаем временную ссылку для скачивания
-    //     const link = document.createElement('a');
-    //     link.href = fileUrl;
-    //     link.setAttribute('download', fileName);
-    //     link.style.display = 'none';
-    //     // Добавляем в DOM, кликаем и удаляем
-    //     document.body.appendChild(link);
-    //     link.click();
-    //     document.body.removeChild(link);
-
-    //     handleCloseContextMenu();
-    // };
-    const handleDownloadClick = async (row) => {
-        if (!row) return;
-        try {
-            const response = await fetch(`${apiUrl}/documents/${row.id}/file/`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-                redirect: 'manual'
-            });
-            if (!response.ok) throw new Error('Ошибка загрузки файла');
-            const blob = await response.blob();
-            const url = URL.createObjectURL(blob);
-            const fileName = `${row.code}_${row.nameBottom}.${row.extension}`;
-
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', fileName);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-
-            URL.revokeObjectURL(url);
-        } catch (error) {
-            console.error('Ошибка при скачивании:', error);
-            setError('Не удалось скачать документ');
-            setShowError(true);
-            setTimeout(() => setShowError(false), 3000);
-        }
-    };
-
-    // const downloadExampleDocument = () => {
     //     try {
-    //         // Используем require для корректного пути в React
-    //         const filePath = require('../../assets/documents/example_doc.pdf');
-    //         const fileName = 'example_document.pdf';
-            
+    //         const blob = await getDocumentFile(token, row.id); // Используем API-функцию
+    //         const url = URL.createObjectURL(blob);
+    //         const fileName = `${row.code}_${row.nameBottom}.${row.extension}`;
     //         const link = document.createElement('a');
-    //         link.href = filePath;
+    //         link.href = url;
     //         link.setAttribute('download', fileName);
-            
     //         document.body.appendChild(link);
     //         link.click();
     //         document.body.removeChild(link);
+    //         URL.revokeObjectURL(url);
+    //         // setIsDownloading(false); // Опционально
     //     } catch (error) {
     //         console.error('Ошибка при скачивании:', error);
-    //         setError('Не удалось скачать документ');
+    //         setError('Не удалось скачать документ. Проверьте токен или попробуйте позже.');
     //         setShowError(true);
-    //         setTimeout(() => setShowError(false), 3000);
+    //         setTimeout(() => {
+    //             setShowError(false);
+    //             setError('');
+    //         }, 3000);
+    //         // Нет navigate('/') — страница остаётся на месте!
     //     }
     // };
+    // const handleDownloadClick = async (row) => {
+    //     if (!row) return;
+    //     if (!token) {
+    //         console.error('No token available for download');
+    //         setError('Не авторизованы. Войдите в систему.');
+    //         setShowError(true);
+    //         setTimeout(() => {
+    //             setShowError(false);
+    //             setError('');
+    //         }, 3000);
+    //         return;  // ← Проверка токена — предотвращает fetch без токена
+    //     }
+    //     setIsDownloading(true);  // Индикатор загрузки
+    //     console.log('Starting download for document ID:', row.id, 'Token exists:', !!token);  // Диагностика
+    //     try {
+    //         const blob = await getDocumentFile(token, row.id);
+    //         console.log('Download successful, blob size:', blob.size);  // Диагностика
+    //         const url = URL.createObjectURL(blob);
+    //         const fileName = `${row.code}_${row.nameBottom}.${row.extension}`;
+    //         const link = document.createElement('a');
+    //         link.href = url;
+    //         link.setAttribute('download', fileName);
+    //         document.body.appendChild(link);
+    //         link.click();
+    //         document.body.removeChild(link);
+    //         URL.revokeObjectURL(url);
+    //     } catch (error) {
+    //         console.error('Download error details:', {
+    //             message: error.message,
+    //             name: error.name,
+    //             // Если error от сервера, покажем status
+    //             is401: error.message.includes('401'),
+    //             isRedirect: error.message.includes('Redirect')
+    //         });
+    //         let userError = 'Не удалось скачать документ.';
+    //         if (error.message.includes('401')) {
+    //             userError += ' Токен истёк — войдите заново.';
+    //         } else if (error.message.includes('Redirect')) {
+    //             userError += ' Сервер редиректит на логин — проверьте авторизацию.';
+    //         } else {
+    //             userError += ` ${error.message}`;
+    //             }
+    //         setError(userError);
+    //         setShowError(true);
+    //         setTimeout(() => {
+    //             setShowError(false);
+    //             setError('');
+    //         }, 5000);  // Увеличили таймаут для 401
+    //         // ← Нет navigate('/') — только локальная ошибка!
+    //     } finally {
+    //         setIsDownloading(false);  // Всегда сбрасываем индикатор
+    //     }
+    // };
+    const handleDownloadClick = async (row) => {
+        if (!row) return;
+        if (!token) {
+            console.error('No token available for download');
+            setError('Не авторизованы. Войдите в систему.');
+            setShowError(true);
+            setTimeout(() => {
+                setShowError(false);
+                setError('');
+            }, 3000);
+            return;
+        }
+        // ← Бэкап токена (защита от AuthContext logout во время fetch)
+        const backupToken = token;
+        console.log('Backup token before download:', !!backupToken, 'Original token:', !!token);
+        setIsDownloading(true);
+        console.log('Starting download for document ID:', row.id, 'File size expected: large');
+        // ← Timeout controller для больших файлов
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => {
+            controller.abort();
+            console.log('Download timeout (30s)');
+        }, 30000);  // 30 сек max
+        try {
+            // Используем backupToken для fetch (если основной token изменится из-за AuthContext)
+            const blob = await getDocumentFile(backupToken, row.id);
+            clearTimeout(timeoutId);  // Очищаем timeout
+            console.log('Download successful via API, blob size:', blob.size, 'Type:', blob.type);
+            const url = URL.createObjectURL(blob);
+            const fileName = `${row.code}_${row.nameBottom}.${row.extension}`;
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = fileName;  // .download property
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            // ← Детекция logout после download (проверяем через 1-2 сек)
+            setTimeout(() => {
+                console.log('Post-download token check:', !!token, 'Backup was:', !!backupToken);
+                if (!token && backupToken) {
+                    console.warn('Logout detected after successful download! Attempting restore...');
+                    // Восстанавливаем token (замените 'yourTokenKey' на ключ из localStorage в AuthContext, напр. 'token' или 'access_token')
+                    localStorage.setItem('yourTokenKey', backupToken);
+                    // Если useAuth имеет setToken: const { setToken } = useAuth(); setToken(backupToken);
+                    
+                    setError('Скачивание завершено, но сессия прервана. Рекомендуем перелогиниться для безопасности.');
+                    setShowError(true);
+                    setTimeout(() => {
+                        setShowError(false);
+                        setError('');
+                        // Опционально: navigate к settings или reload для refresh auth
+                        // window.location.reload();  // Принудительный reload, если restore не сработал
+                    }, 5000);
+                } else {
+                    console.log('No logout detected — all good!');
+                }
+            }, 1500);  // 1.5 сек после download
+        } catch (error) {
+            clearTimeout(timeoutId);
+            console.error('Download error details:', {
+                message: error.message,
+                name: error.name,
+                isAbort: error.name === 'AbortError',
+                is401: error.message.includes('401'),
+                isRedirect: error.message.includes('Redirect')
+            });
+
+            let userError = 'Не удалось скачать документ.';
+            if (error.name === 'AbortError') {
+                userError += ' Таймаут загрузки — попробуйте снова на лучшем соединении.';
+            } else if (error.message.includes('401')) {
+                userError += ' Токен недействителен — войдите заново.';
+            } else if (error.message.includes('Redirect')) {
+                userError += ' Сервер требует авторизации.';
+            } else {
+                userError += ` ${error.message}`;
+            }
+            setError(userError);
+            setShowError(true);
+            setTimeout(() => {
+                setShowError(false);
+                setError('');
+            }, 5000);
+        } finally {
+            setIsDownloading(false);
+            controller.abort();  // Cleanup
+        }
+    };
+
     const handleActiveModalRow = (e, rowId) => {
         e.preventDefault();
         setIsOneBlockVisible(true);
@@ -1870,7 +1968,18 @@ const AllDocuments = () => {
                     {/* Основной блок - всегда видим */}
                     <div className="modal-info-row-card one">
                         <div className="modal-info-row-card-item" onClick={handleViewClick}>{lang === 'ru' ? 'Посмотреть' : 'View'}</div>
-                        <div className="modal-info-row-card-item" onClick={() => handleDownloadClick(currentRow)}><a href="#">{lang === 'ru' ? 'Скачать' : 'Download'}</a></div>
+                        <div 
+                            className="modal-info-row-card-item" 
+                            onClick={() => !isDownloading && handleDownloadClick(currentRow)}
+                            style={{ opacity: isDownloading ? 0.5 : 1, cursor: isDownloading ? 'not-allowed' : 'pointer' }}
+                        >
+                            <a href="#" style={{ pointerEvents: 'none' }}>  {/* pointerEvents: none для disable */}
+                                {isDownloading 
+                                    ? (lang === 'ru' ? 'Скачивание...' : 'Downloading...') 
+                                    : (lang === 'ru' ? 'Скачать' : 'Download')
+                                }
+                            </a>
+                        </div>
                         <div 
                             className="modal-info-row-card-item one"
                             onMouseEnter={handleListBtnOneEnter}

@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom'; // Импортир
 import './OpenDocument.css';
 import { Link, useParams, useSearchParams } from 'react-router';
 import { apiUrl } from '../../settings';
+import { getDocumentFile } from '../../api';
 
 const defaultSettings = {
     theme: 'light',
@@ -73,38 +74,6 @@ const OpenDocument = () => {
     useEffect(() => {
         applySettings(settings);
     }, [settings]);
-    // Загрузка файла документа
-    // useEffect(() => {
-    //     if (!documentId || !token) return;
-    //     const fetchDocumentFile = async () => {
-    //         setLoadingFile(true);
-    //         setErrorFile(null);
-    //         try {
-    //             const response = await fetch(`${apiUrl}/documents/${documentId}/file/`, {
-    //                 headers: {
-    //                     Authorization: `Bearer ${token}`,
-    //                 },
-    //             });
-    //             // console.log('response: ', response);
-    //             if (!response.ok) {
-    //                 throw new Error(`Ошибка загрузки документа: ${response.statusText}`);
-    //             }
-    //             const blob = await response.blob();
-    //             const url = URL.createObjectURL(blob);
-    //             setFileUrl(url);
-    //         } catch (err) {
-    //             setErrorFile(err.message);
-    //         } finally {
-    //             setLoadingFile(false);
-    //         }
-    //     };
-    //     fetchDocumentFile();
-    //     return () => {
-    //         if (fileUrl) {
-    //             URL.revokeObjectURL(fileUrl);
-    //         }
-    //     };
-    // }, [documentId, token]);
     // Обработчики пароля
     const togglePasswordVisibility = () => {
         setPasswordVisible(!passwordVisible);
@@ -146,40 +115,15 @@ const OpenDocument = () => {
             setLoadingFile(true);
             setErrorFile(null);
             try {
-                const response = await fetch(`${apiUrl}/documents/${documentId}/file/`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                if (!response.ok) {
-                    throw new Error(`Ошибка загрузки документа: ${response.statusText}`);
-                }
-                // const contentDisposition = response.headers.get('Content-Disposition') || response.headers.get('content-disposition');
-                // let filename = 'file';
-                // if (contentDisposition) {
-                //     // Попытка получить filename*=UTF-8''encodedfilename
-                //     const filenameStarMatch = contentDisposition.match(/filename\*=UTF-8''([^;\r\n]+)/i);
-                //     if (filenameStarMatch && filenameStarMatch[1]) {
-                //         filename = decodeURIComponent(filenameStarMatch[1]);
-                //     } else {
-                //         // Попытка получить filename="filename"
-                //         const filenameMatch = contentDisposition.match(/filename="?([^\";]+)"?/i);
-                //         if (filenameMatch && filenameMatch[1]) {
-                //             filename = filenameMatch[1];
-                //         }
-                //     }
-                // }
-                const extension = response.headers.get('Content-Type') || response.headers.get('content-type');
-                setFileExtension(extension.split('/').pop().toLowerCase());
-
-
-                const blob = await response.blob();
+                const blob = await getDocumentFile(token, documentId); // Используем API-функцию
                 setFileType(blob.type);
                 const url = URL.createObjectURL(blob);
                 setFileUrl(url);
-                setFilename(filename);
+                setFilename(`${documentCode}_${docName}.${documentExt}`); // Правильно устанавливаем имя из params
+                setFileExtension(documentExt); // Из params
             } catch (err) {
-                setErrorFile(err.message);
+                console.error('Ошибка загрузки документа:', err);
+                setErrorFile(`Ошибка загрузки документа: ${err.message}`);
             } finally {
                 setLoadingFile(false);
             }
@@ -190,7 +134,7 @@ const OpenDocument = () => {
                 URL.revokeObjectURL(fileUrl);
             }
         };
-    }, [documentId, token]);
+    }, [documentId, token, documentCode, docName, documentExt]); // Добавили зависимости для params
 
     return (
         <div className="open_doc-container">
@@ -216,13 +160,14 @@ const OpenDocument = () => {
                     <>
                         {fileExtension === 'pdf' ? (
                             <iframe
-                                style={{filter: 'invert(100%)'}}
                                 src={fileUrl}
                             />
                         ) : (
-                            <div>
-                                <span>Файл: <span>{`${documentCode}_${docName}.${documentExt}`}</span></span>
-                                <a href={fileUrl} download={`${documentCode}_${docName}.${documentExt}`}>Скачать</a>
+                            <div className='download-window'>
+                                <div className="download-window-content">
+                                    <span>{`${documentCode}_${docName}.${documentExt}`}</span>
+                                    <a href={fileUrl} download={`${documentCode}_${docName}.${documentExt}`}>Скачать</a>
+                                </div>
                             </div>
                         )}
                     </>

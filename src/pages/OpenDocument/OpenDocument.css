@@ -56,17 +56,40 @@
     width: 100%;
     height: 100%;
 }
-.pdf-document {
-  width: 100%;
-  height: 100%;
-  overflow: auto;
+
+.download-window {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
 }
-.pdf-document canvas {
-  max-width: 100% !important;
-  height: auto !important;
-  margin: 0 auto;
-  display: block;
+.download-window-content {
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
+.download-window-content span {
+    width: 100%;
+    text-align: center;
+}
+.download-window-content a {
+    text-decoration: none;
+    color: #fff;
+    border-radius: 10px;
+    padding: 5px 10px;
+    transition: all .3s ease;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+}
+
 @media ( max-width: 767px ) {
     .open_document-header {
         grid-template-columns: 60px auto 60px;

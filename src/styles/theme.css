@@ -158,8 +158,15 @@
 .main.light #button-login {
     color: #fff;
 }
-.main.light #button-login:hover {
-    color: #000;
+@media (hover: hover) {
+    .main.light #button-login:hover {
+        color: #000;
+    }
+}
+@media (hover: active) {
+    .main.light #button-login:active {
+        color: #000;
+    }
 }
 .main.light .main-table thead tr th:not(:last-child)::before {
     background-color: #0002;
@@ -190,6 +197,22 @@
 .main.light .modal-info-row-card-item:not(:last-child)::before,
 .main.light .modal-info-row-card-item:hover {
   background-color: #0001;
+}
+.main.light .download-window-content {
+    background-color: #FFF0F0;
+}
+.main.light .download-window-content a {
+    color: #fff;
+}
+@media (hover :hover) {
+    .main.light .download-window-content a:hover {
+        color: #000;
+    }
+}
+@media (hover :active) {
+    .main.light .download-window-content a:active {
+        color: #000;
+    }
 }
 
 
@@ -364,10 +387,18 @@
 .main.dark .modal-bg-image-btn.cancel {
     color: #fff;
 }
-.main.dark #button-login,
-.main.dark #button-login:hover
-{
+.main.dark #button-login {
     color: #fff;
+}
+@media (hover: hover) {
+    .main.dark #button-login:hover {
+        color: #fff;
+    }
+}
+@media (hover: active) {
+    .main.dark #button-login:active {
+        color: #fff;
+    }
 }
 .main.dark .main-table thead tr th:not(:last-child)::before {
     background-color: #fff3;
@@ -405,4 +436,20 @@
 .main.dark .modal-info-row-card-item:not(:last-child)::before,
 .main.dark .modal-info-row-card-item:hover {
   background-color: #fff1;
+}
+.main.dark .download-window-content {
+    background-color: #fff1;
+}
+.main.dark .download-window-content a {
+    color: #fff;
+}
+@media (hover :hover) {
+    .main.dark .download-window-content a:hover {
+        color: #fff;
+    }
+}
+@media (hover :active) {
+    .main.dark .download-window-content a:active {
+        color: #fff;
+    }
 }

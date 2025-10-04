@@ -153,6 +153,13 @@ const Settings = () => {
 
     // ВЫБОР СТОЛБЦОВ ТАБЛИЦЫ
     const [selectedColumns, setSelectedColumns] = useState(settings.columsTable || allColumns.map(c => c.key));
+
+    const activeSet = new Set(selectedColumns);
+    const availableFieldsOrdered = [
+        ...allColumns.filter(c => activeSet.has(c.key)),
+        ...allColumns.filter(c => !activeSet.has(c.key))
+    ];
+
     // Для drag and drop
     const dragItem = useRef();
     const dragOverItem = useRef();
@@ -1103,15 +1110,15 @@ const Settings = () => {
                                 {lang === 'ru' ? 'Включить поля:' : 'Enable fields:'}
                             </div>
                             <div className="table-cols-items" id="available-fields" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                                {allColumns.map(({ key, labelRu, labelEn }) => (
-                                <div
-                                    key={key}
-                                    onClick={() => toggleColumn(key)}
-                                    className={`table-cols-item styled-text ${selectedColumns.includes(key) ? 'active' : ''}`}
-                                    title={lang === 'ru' ? labelRu : labelEn}
-                                >
-                                    <span>{lang === 'ru' ? labelRu : labelEn}</span>
-                                </div>
+                                {availableFieldsOrdered.map(({ key, labelRu, labelEn }) => (
+                                    <div
+                                        key={key}
+                                        onClick={() => toggleColumn(key)}
+                                        className={`table-cols-item styled-text ${selectedColumns.includes(key) ? 'active' : ''}`}
+                                        title={lang === 'ru' ? labelRu : labelEn}
+                                    >
+                                        <span>{lang === 'ru' ? labelRu : labelEn}</span>
+                                    </div>
                                 ))}
                             </div>
                             <div className="table-cols-title styled-text" style={{ marginTop: '20px' }}>
