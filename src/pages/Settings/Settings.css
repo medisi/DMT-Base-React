@@ -223,6 +223,7 @@
     justify-content: center;
     align-items: center;
     cursor: pointer;
+    background-color: transparent;
 }
 .modal-fonts-btn.accept {
     background-color: #FF4F00;
@@ -824,6 +825,7 @@
     border-radius: 10px;
     padding: 5px 10px;
     font-size: 16px;
+    background-color: transparent;
 }
 .modal-security-form-btn.edit {
     color: #fff;

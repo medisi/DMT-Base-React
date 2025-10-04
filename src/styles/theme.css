@@ -134,6 +134,10 @@
     background-color: #fff;
     box-shadow: 0 4px 4px #0002;
 }
+.main.light.blur #button-back {
+    background-color: #fff3;
+    box-shadow: 0 4px 4px #0002;
+}
 .main.light .open_document-header,
 .main.light .open_document-main
 {
@@ -214,6 +218,39 @@
         color: #000;
     }
 }
+.main.main.light #input-search,
+.main.main.light .modal-security-form-btn
+{
+    color: #000;
+}
+.main.light .modal-fonts-content {
+    background-color: #FFF0F0;
+    color: #000;
+}
+.main.light .modal-fonts-item-example {
+    background-color: #0001;
+}
+.main.light .modal-fonts-item-cards {
+    background-color: #0001;
+}
+.main.light .modal-fonts-item-card.active,
+.main.light .modal-fonts-item-card:hover {
+    background-color: #0001;
+}
+.main.light .modal-fonts-example-text {
+    background-color: #0001;
+}
+.main.light .modal-fonts-btn.cancel {
+    color: #000;
+}
+
+
+
+
+
+
+
+
 
 
 /* DARK THEME */
@@ -359,6 +396,10 @@
     background-color: #3A3A3A;
     box-shadow: 0 4px 4px #0005;
 }
+.main.dark.blur #button-back {
+    background-color: #0001;
+    box-shadow: 0 4px 4px #0002;
+}
 .main.dark .col-star img,
 .main.dark #btn-favorite .btn-favorite-star-fav,
 .main.dark .bg-image img,
@@ -452,4 +493,29 @@
     .main.dark .download-window-content a:active {
         color: #fff;
     }
+}
+.main.main.dark #input-search,
+.main.main.dark .modal-security-form-btn
+{
+    color: #fff;
+}
+.main.dark .modal-fonts-content {
+    background-color: #3A3A3A;
+    color: #fff;
+}
+.main.dark .modal-fonts-item-example {
+    background-color: #fff1;
+}
+.main.dark .modal-fonts-item-cards {
+    background-color: #fff1;
+}
+.main.dark .modal-fonts-item-card.active,
+.main.dark .modal-fonts-item-card:hover {
+    background-color: #fff1;
+}
+.main.dark .modal-fonts-example-text {
+    background-color: #fff1;
+}
+.main.dark .modal-fonts-btn.cancel {
+    color: #fff;
 }

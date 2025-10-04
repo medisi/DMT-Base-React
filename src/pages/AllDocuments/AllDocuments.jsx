@@ -1084,94 +1084,16 @@ const AllDocuments = () => {
         if (closeTimerRef.current) {
             clearTimeout(closeTimerRef.current);
             closeTimerRef.current = null;
-        }
+        };
         if (closeTimerTwoRef.current) {
             clearTimeout(closeTimerTwoRef.current);
             closeTimerTwoRef.current = null;
-        }
+        };
         if (closeTimerThreeRef.current) {
             clearTimeout(closeTimerThreeRef.current);
             closeTimerThreeRef.current = null;
-        }
-    }
-    // const handleDownloadClick = async (row) => {
-    //     if (!row) return;
-    //     try {
-    //         const blob = await getDocumentFile(token, row.id); // Используем API-функцию
-    //         const url = URL.createObjectURL(blob);
-    //         const fileName = `${row.code}_${row.nameBottom}.${row.extension}`;
-    //         const link = document.createElement('a');
-    //         link.href = url;
-    //         link.setAttribute('download', fileName);
-    //         document.body.appendChild(link);
-    //         link.click();
-    //         document.body.removeChild(link);
-    //         URL.revokeObjectURL(url);
-    //         // setIsDownloading(false); // Опционально
-    //     } catch (error) {
-    //         console.error('Ошибка при скачивании:', error);
-    //         setError('Не удалось скачать документ. Проверьте токен или попробуйте позже.');
-    //         setShowError(true);
-    //         setTimeout(() => {
-    //             setShowError(false);
-    //             setError('');
-    //         }, 3000);
-    //         // Нет navigate('/') — страница остаётся на месте!
-    //     }
-    // };
-    // const handleDownloadClick = async (row) => {
-    //     if (!row) return;
-    //     if (!token) {
-    //         console.error('No token available for download');
-    //         setError('Не авторизованы. Войдите в систему.');
-    //         setShowError(true);
-    //         setTimeout(() => {
-    //             setShowError(false);
-    //             setError('');
-    //         }, 3000);
-    //         return;  // ← Проверка токена — предотвращает fetch без токена
-    //     }
-    //     setIsDownloading(true);  // Индикатор загрузки
-    //     console.log('Starting download for document ID:', row.id, 'Token exists:', !!token);  // Диагностика
-    //     try {
-    //         const blob = await getDocumentFile(token, row.id);
-    //         console.log('Download successful, blob size:', blob.size);  // Диагностика
-    //         const url = URL.createObjectURL(blob);
-    //         const fileName = `${row.code}_${row.nameBottom}.${row.extension}`;
-    //         const link = document.createElement('a');
-    //         link.href = url;
-    //         link.setAttribute('download', fileName);
-    //         document.body.appendChild(link);
-    //         link.click();
-    //         document.body.removeChild(link);
-    //         URL.revokeObjectURL(url);
-    //     } catch (error) {
-    //         console.error('Download error details:', {
-    //             message: error.message,
-    //             name: error.name,
-    //             // Если error от сервера, покажем status
-    //             is401: error.message.includes('401'),
-    //             isRedirect: error.message.includes('Redirect')
-    //         });
-    //         let userError = 'Не удалось скачать документ.';
-    //         if (error.message.includes('401')) {
-    //             userError += ' Токен истёк — войдите заново.';
-    //         } else if (error.message.includes('Redirect')) {
-    //             userError += ' Сервер редиректит на логин — проверьте авторизацию.';
-    //         } else {
-    //             userError += ` ${error.message}`;
-    //             }
-    //         setError(userError);
-    //         setShowError(true);
-    //         setTimeout(() => {
-    //             setShowError(false);
-    //             setError('');
-    //         }, 5000);  // Увеличили таймаут для 401
-    //         // ← Нет navigate('/') — только локальная ошибка!
-    //     } finally {
-    //         setIsDownloading(false);  // Всегда сбрасываем индикатор
-    //     }
-    // };
+        };
+    };
     const handleDownloadClick = async (row) => {
         if (!row) return;
         if (!token) {
