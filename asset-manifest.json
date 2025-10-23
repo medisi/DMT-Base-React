@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/DMT-Base-React/static/css/main.0438ef5e.css",
-    "main.js": "/DMT-Base-React/static/js/main.69c94efe.js",
+    "main.css": "/DMT-Base-React/static/css/main.243312d3.css",
+    "main.js": "/DMT-Base-React/static/js/main.c1efaf3b.js",
     "static/js/453.6da876f2.chunk.js": "/DMT-Base-React/static/js/453.6da876f2.chunk.js",
     "static/media/logo.webm": "/DMT-Base-React/static/media/logo.777fec5f88a3b374731c.webm",
     "static/media/bgimage12.png": "/DMT-Base-React/static/media/bgimage12.54aa54eb2d90a01250f1.png",
@@ -35,12 +35,12 @@
     "static/media/bgimage5.png": "/DMT-Base-React/static/media/bgimage5.f34baf445e7a8824a4d0.png",
     "static/media/Sansation-Regular.ttf": "/DMT-Base-React/static/media/Sansation-Regular.8b7bbfcc7285a2757ff5.ttf",
     "index.html": "/DMT-Base-React/index.html",
-    "main.0438ef5e.css.map": "/DMT-Base-React/static/css/main.0438ef5e.css.map",
-    "main.69c94efe.js.map": "/DMT-Base-React/static/js/main.69c94efe.js.map",
+    "main.243312d3.css.map": "/DMT-Base-React/static/css/main.243312d3.css.map",
+    "main.c1efaf3b.js.map": "/DMT-Base-React/static/js/main.c1efaf3b.js.map",
     "453.6da876f2.chunk.js.map": "/DMT-Base-React/static/js/453.6da876f2.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.0438ef5e.css",
-    "static/js/main.69c94efe.js"
+    "static/css/main.243312d3.css",
+    "static/js/main.c1efaf3b.js"
   ]
 }
