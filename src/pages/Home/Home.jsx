@@ -213,10 +213,10 @@ const Home = () => {
                     )}
                     {projectProperties && (
                         <div className="about-content-project">
-                        <Link to={`/content/${encodeURIComponent(projectProperties.shortname)}`} className='about-content-project-link'>
-                            {lang === 'ru' ? 'Состав проекта' : 'The composition of the project'}
-                        </Link>
-                    </div>
+                            <Link to={`/content/${encodeURIComponent(projectProperties.shortname)}?prevPage=home`} className='about-content-project-link'>
+                                {lang === 'ru' ? 'Состав проекта' : 'The composition of the project'}
+                            </Link>
+                        </div>
                     )}
                     
                 </div>

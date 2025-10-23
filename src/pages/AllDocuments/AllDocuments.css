@@ -195,6 +195,7 @@ summary {
 .main_content-header-item {
     display: flex;
     gap: 10px;
+    align-items: center;
 }
 .main_content-header-item-title {
     font-size: 16px;
@@ -244,6 +245,7 @@ summary {
 .list-btn img {
     width: 15px;
     height: 15px;
+    opacity: .5;
 }
 .main-btns {
     display: flex;
@@ -1003,6 +1005,24 @@ html {
 }
 .table-td-text-alight-left {
     text-align: left;
+}
+.main_content-header-link-sostav {
+    background-color: #fff8;
+    color: #000;
+    height: 30px;
+    overflow: hidden;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 10px;
+    transition: all .3s ease;
+    text-decoration: none;
+}
+.main_content-header-link-sostav img {
+    width: 17px;
+    height: auto;
+    opacity: .5;
 }
 
 @media ( min-width: 768px ) {

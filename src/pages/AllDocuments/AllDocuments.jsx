@@ -1802,6 +1802,10 @@ const AllDocuments = () => {
 
                     <div className="main_content-header-item two">
 
+                        <Link to={`/content/${encodeURIComponent(projectName)}?prevPage=all_documents/${projectId}/${projectName}`} className='main_content-header-link-sostav'>
+                            <img src={require('../../assets/icons/sostav.png')} alt="" />
+                        </Link>
+
                         <div className="list">
                             <div className="list-label">
                                 <label htmlFor="select-list" className="styled-text">

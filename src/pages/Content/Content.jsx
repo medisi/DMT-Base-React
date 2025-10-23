@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import './Content.css';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import NameUser from "../../components/NameUser/NameUser";
 import NameDatabase from "../../components/NameDatabase/NameDatabase";
 
@@ -65,6 +65,10 @@ const Content = () => {
         }
     }, []);
     const { projectName } = useParams();
+    const [searchParams] = useSearchParams();
+    const prevPage = searchParams.get('prevPage');
+
+
 
     return (
         <>
@@ -81,7 +85,7 @@ const Content = () => {
                     <img src={require('../../assets/icons/settings.png')} alt="Выйти" />
                 </Link>
 
-                <Link to='/home' id="button-back" onClick={buttonBack}>
+                <Link to={`/${prevPage}`} id="button-back" onClick={buttonBack}>
                     <img src={require('../../assets/icons/arrow.png')} alt="Назад" />
                 </Link>
 
