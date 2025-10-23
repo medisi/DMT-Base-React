@@ -1,0 +1,144 @@
+.sidebar-content-btns {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+}
+.sidebar-content-btn {
+    background-color: #FF4F0030;
+    border-radius: 5px;
+    padding: 10px 20px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+.sidebar-content-btn span {
+    font-size: 16px;
+    color: #000;
+}
+
+.main_sostav-table {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    overflow: auto;
+    background-color: #fff;
+    margin-bottom: 20px;
+}
+.main_sostav-table table {
+    position: relative;
+    width: 100%;
+    table-layout: auto;
+    border-collapse: collapse;
+    min-width: 100%;
+}
+.main_sostav-table table thead tr,
+.main_sostav-table table tbody tr {
+    display: flex;
+    gap: 0;
+}
+.main_sostav-table table thead tr th,
+.main_sostav-table table tbody tr td {
+    /* width: 100%; */
+    width: 120px;
+    padding: 5px 10px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 400px;
+    text-align: center;
+    position: relative;
+    user-select: none;
+}
+.main_sostav-table table thead tr th:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    right: 0;
+    width: 1px;
+    height: 50%;
+}
+.main_sostav-table table thead tr {
+    position: sticky;
+    left: 0;
+    right: 0;
+    top: 0;
+}
+.main_sostav-table table thead tr,
+.main_sostav-table table tbody tr {
+    width: 100%;
+}
+.main_sostav-table table tbody {
+    position: relative;
+}
+.col-plus {
+    width: 25px !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: visible !important;
+}
+.col-plus span {
+    width: 15px;
+    height: 15px;
+    border-radius: 2px;
+    background-color: #0001;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    padding: 3px;
+    cursor: pointer;
+}
+.row-stroke.one  td:nth-child(2) {
+    text-align: left;
+}
+.row-stroke.two .col-plus::before {
+    content: '';
+    position: absolute;
+    right: -35px;
+    bottom: 15px;
+    width: 20px;
+    height: 20px;
+    /* background-color: red; */
+    border-left: 1px dashed #0003;
+    border-bottom: 1px dashed #0003;
+}
+.row-stroke.two.add .col-plus::before {
+    height: 30px;
+}
+
+.row-stroke.one .col-plus::before {
+    content: '';
+    position: absolute;
+    right: 12px;
+    bottom: -6px;
+    width: 1px;
+    height: 13px;
+    border-left: 1px dashed #0003;
+}
+.row-stroke.one.open .col-plus::before {
+    bottom: -35px;
+    height: 40px;
+}
+.row-stroke.one.open.more .col-plus::before {
+    bottom: -63px;
+    height: 70px;
+}
+.main_sostav-table table thead tr th:nth-child(6),
+.main_sostav-table table tbody tr td:nth-child(6) {
+    width: 300px;
+    text-align: left;
+}
+.main_sostav-table table thead tr th:nth-child(11),
+.main_sostav-table table tbody tr td:nth-child(11) {
+    width: 150px;
+    text-align: left;
+}
+.main_sostav-table table thead tr th:nth-child(14),
+.main_sostav-table table tbody tr td:nth-child(14) {
+    width: 170px;
+    text-align: left;
+}

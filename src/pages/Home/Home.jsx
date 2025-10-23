@@ -132,7 +132,6 @@ const Home = () => {
             };
         }
     }, [isSidebarHidden]); // Перерегистрируем при изменении видимости сайдбара
-    
 
     return (
         <>
@@ -212,6 +211,14 @@ const Home = () => {
                             </div>
                         </div>
                     )}
+                    {projectProperties && (
+                        <div className="about-content-project">
+                        <Link to={`/content/${encodeURIComponent(projectProperties.shortname)}`} className='about-content-project-link'>
+                            {lang === 'ru' ? 'Состав проекта' : 'The composition of the project'}
+                        </Link>
+                    </div>
+                    )}
+                    
                 </div>
             </div>
         </>

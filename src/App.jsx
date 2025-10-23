@@ -9,6 +9,7 @@ import Settings from './pages/Settings/Settings';
 import { AuthProvider } from './AuthContext';
 import Login from './pages/Login/Login';
 import OpenDocument from './pages/OpenDocument/OpenDocument';
+import Content from './pages/Content/Content';
 
 const defaultSettings = {
   theme: 'light',
@@ -78,6 +79,7 @@ const App = () => {
           <Route path='/all_documents/:projectId/:projectName' element={<AllDocuments />} />
           <Route path='/open_document/:documentName' element={<OpenDocument />} />
           <Route path='/settings' element={<Settings settings={settings} setSettings={setSettings} />} />
+          <Route path='/content/:projectName' element={<Content />} />
         </Routes>
       </div>
     </AuthProvider>
